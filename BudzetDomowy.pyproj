@@ -30,13 +30,16 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="budzet-app\admin.py" />
-    <Compile Include="budzet-app\apps.py" />
-    <Compile Include="budzet-app\migrations\__init__.py" />
-    <Compile Include="budzet-app\models.py" />
-    <Compile Include="budzet-app\tests.py" />
-    <Compile Include="budzet-app\views.py" />
-    <Compile Include="budzet-app\__init__.py" />
+    <Compile Include="budzetApp\admin.py" />
+    <Compile Include="budzetApp\apps.py" />
+    <Compile Include="budzetApp\migrations\__init__.py" />
+    <Compile Include="budzetApp\models.py" />
+    <Compile Include="budzetApp\tests.py" />
+    <Compile Include="budzetApp\urls.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="budzetApp\views.py" />
+    <Compile Include="budzetApp\__init__.py" />
     <Compile Include="manage.py" />
     <Compile Include="BudzetDomowy\__init__.py" />
     <Compile Include="BudzetDomowy\settings.py" />
@@ -44,15 +47,17 @@
     <Compile Include="BudzetDomowy\wsgi.py" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="budzet-app\templates\budzet-app\index.html" />
+    <Content Include="budzetApp\templates\budzetApp\temp.html" />
+    <Content Include="budzetApp\templates\budzetApp\index.html" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="budzet-app\" />
-    <Folder Include="budzet-app\migrations\" />
-    <Folder Include="budzet-app\templates\" />
-    <Folder Include="budzet-app\templates\budzet-app\" />
+    <Folder Include="budzetApp\" />
+    <Folder Include="budzetApp\migrations\" />
+    <Folder Include="budzetApp\templates\" />
+    <Folder Include="budzetApp\templates\budzetApp\" />
     <Folder Include="BudzetDomowy\" />
+    <Folder Include="budzetApp\static\" />
   </ItemGroup>
   <ItemGroup>
     <Interpreter Include="env\">
