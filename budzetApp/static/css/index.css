@@ -1,0 +1,84 @@
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: #ffffff;
+ }
+ 
+
+ .quick-actions, 
+ .summary-section, 
+ .recent-transactions {
+    background-color: #1E1E1E;
+    border-radius: 8px;
+    padding: 20px;
+ }
+
+ .action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+ }
+ 
+ .action-card {
+    background-color: #2C2C2C;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+ }
+ 
+ .action-card:hover {
+    background-color: #3C3C3C;
+ }
+ 
+
+ .summary-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+ }
+ 
+ .summary-card {
+    background-color: #2C2C2C;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+ }
+ 
+ .summary-card .amount {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 10px 0;
+ }
+ 
+ .summary-card.income .amount {
+    color: #4CAF50;
+ }
+ 
+ .summary-card.expenses .amount {
+    color: #F44336;
+ }
+ 
+
+ .recent-transactions table {
+    width: 100%;
+    border-collapse: collapse;
+ }
+ 
+ .recent-transactions th, 
+ .recent-transactions td {
+    border-bottom: 1px solid #2C2C2C;
+    padding: 10px;
+    text-align: left;
+ }
+ 
+ .recent-transactions .expense {
+    color: #F44336;
+ }
+ 
+ .recent-transactions .income {
+    color: #4CAF50;
+ }

@@ -1,17 +1,16 @@
-﻿from django.urls import path
-from .views import (
-    TransactionListView,
-    TransactionCreateView,
-    TransactionUpdateView,
-    TransactionDeleteView
-)
+from django.urls import path
 
-app_name = 'budzetApp'
+from . import views
+
+app_name = "budzetApp"
+
+
 
 urlpatterns = [
-    path('', TransactionListView.as_view(), name='index'),
-    path('index/', TransactionListView.as_view(), name='index'),
-    path('transaction/add/', TransactionCreateView.as_view(), name='add_transaction'),
-    path('transaction/edit/<int:pk>/', TransactionUpdateView.as_view(), name='edit_transaction'),
-    path('transaction/delete/<int:pk>/', TransactionDeleteView.as_view(), name='delete_transaction'),
+    path("", views.login, name='login'),
+    path("index/", views.index, name="index"),
+    path("budget/", views.budget, name="budget"),
+    path('budget/delete/<int:budget_id>/', views.delete_budget, name='delete_budget'),
+    path('addtransaction/', views.add_transaction, name='addtransaction')
+    
 ]

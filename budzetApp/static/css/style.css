@@ -1,218 +1,114 @@
-/* 
-* Web Application Stylesheet
-* Comprehensive design system for dark-themed financial dashboard
-* 
-* Structure Overview:
-* 1. Global Resets
-* 2. Sidebar Navigation
-* 3. Top Navigation
-* 4. Main Content Areas
-* 5. Dashboard Components
-*/
 
 /* ========== 1. GLOBAL RESETS ========== */
 body {
-    margin: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #121212; /* same as main content*/
-    color: #ffffff;
- }
- 
- /* ========== 2. SIDEBAR NAVIGATION ========== */
- /* Side menu container */
- .side-menu {
-    width: 250px;
-    background-color: #1E1E1E;
-    padding: 20px 0;
-    position: fixed;
-    top: 0;
-    left: -250px;
-    height: 100vh;
-    transition: left 0.3s ease;
-    z-index: 1000;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.3);
- }
- 
- /* Sidebar list reset */
- .side-menu ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
- }
- 
- /* Sidebar menu items */
- .side-menu ul li {
-    padding: 15px 20px;
-    transition: background-color 0.3s;
- }
- 
- /* Menu item links */
- .side-menu ul li a {
-    color: #ffffff;
-    text-decoration: none;
-    display: block;
- }
- 
- /* Hover effect for menu items */
- .side-menu ul li:hover {
-    background-color: #2C2C2C;
- }
- 
- /* Menu items with icons */
- .side-menu ul li a.menu-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #ffffff;
-    text-decoration: none;
-    padding: 10px 15px;
-    transition: background-color 0.3s;
- }
- 
- /* Sidebar menu icons */
- .icon-summary::before { content: "📊"; }
- .icon-budgets::before { content: "💰"; }
- .icon-transactions::before { content: "💳"; }
- .icon-reports::before { content: "📈"; }
- .icon-debts::before { content: "💸"; }
- .icon-users::before { content: "👥"; }
- 
- /* Sidebar activation states */
- .side-menu.active {
-    left: 0;
- }
- 
- /* ========== 3. TOP NAVIGATION ========== */
- .navbar {
-    background-color: #1E1E1E;
-    color: #ffffff;
-    padding: 15px 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #2C2C2C;
- }
- 
- /* Hamburger menu icon */
- .menu-icon {
-    display: flex;
-    flex-direction: column;
-    cursor: pointer;
- }
- 
- .menu-icon div {
-    width: 25px;
-    height: 3px;
-    background-color: #ffffff;
-    margin: 3px 0;
-    transition: 0.3s;
- }
- 
- .user-info {
-    color: #ffffff;
- }
- 
- /* ========== 4. MAIN CONTENT AREA ========== */
- .main {
-    background-color: #121212;
-    color: #ffffff;
-    padding: 20px;
-    transition: margin-left 0.3s ease;
- }
- 
- .main.shifted {
-    margin-left: 250px;
- }
- 
+   margin: 0;
+   font-family: 'Arial', sans-serif;
+   background-color: #121212;
+   color: #ffffff;
+}
 
- /* ========== 5. DASHBOARD COMPONENTS ========== */
-/* 
-* This section can be completely modified or deleted 
-* based on changes in dashboard design and requirements.
-* Current layout is a conceptual mockup and should be 
-* flexibly adjusted to match evolving project needs.
-*/
- .dashboard-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    color: #ffffff;
- }
- 
- /* Section containers */
- .quick-actions, 
- .summary-section, 
- .recent-transactions {
-    background-color: #1E1E1E;
-    border-radius: 8px;
-    padding: 20px;
- }
- 
- /* Action grid */
- .action-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
- }
- 
- .action-card {
-    background-color: #2C2C2C;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
- }
- 
- .action-card:hover {
-    background-color: #3C3C3C;
- }
- 
- /* Summary cards */
- .summary-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
- }
- 
- .summary-card {
-    background-color: #2C2C2C;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
- }
- 
- .summary-card .amount {
-    font-size: 1.5em;
-    font-weight: bold;
-    margin: 10px 0;
- }
- 
- .summary-card.income .amount {
-    color: #4CAF50;
- }
- 
- .summary-card.expenses .amount {
-    color: #F44336;
- }
- 
- /* Recent transactions table */
- .recent-transactions table {
-    width: 100%;
-    border-collapse: collapse;
- }
- 
- .recent-transactions th, 
- .recent-transactions td {
-    border-bottom: 1px solid #2C2C2C;
-    padding: 10px;
-    text-align: left;
- }
- 
- .recent-transactions .expense {
-    color: #F44336;
- }
- 
- .recent-transactions .income {
-    color: #4CAF50;
- }
+/* ========== 2. SIDEBAR NAVIGATION ========== */
+/* Side menu container */
+.side-menu {
+   width: 250px;
+   background-color: #1E1E1E;
+   padding: 20px 0;
+   position: fixed;
+   top: 0;
+   left: -250px;
+   height: 100vh;
+   transition: left 0.3s ease;
+   z-index: 1000;
+   box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+}
+
+/* Sidebar list reset */
+.side-menu ul {
+   list-style-type: none;
+   padding: 0;
+   margin: 0;
+}
+
+/* Sidebar menu items */
+.side-menu ul li {
+   padding: 15px 20px;
+   transition: background-color 0.3s;
+}
+
+/* Menu item links */
+.side-menu ul li a {
+   color: #ffffff;
+   text-decoration: none;
+   display: block;
+}
+
+/* Hover effect for menu items */
+.side-menu ul li:hover {
+   background-color: #2C2C2C;
+}
+
+/* Menu items with icons */
+.side-menu ul li a.menu-item {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   color: #ffffff;
+   text-decoration: none;
+   padding: 10px 15px;
+   transition: background-color 0.3s;
+}
+
+/* Sidebar menu icons */
+.icon-summary::before { content: "📊"; }
+.icon-budgets::before { content: "💰"; }
+.icon-transactions::before { content: "💳"; }
+.icon-reports::before { content: "📈"; }
+.icon-debts::before { content: "💸"; }
+.icon-users::before { content: "👥"; }
+
+/* Sidebar activation states */
+.side-menu.active {
+   left: 0;
+}
+
+/* ========== 3. TOP NAVIGATION ========== */
+.navbar {
+   background-color: #1E1E1E;
+   color: #ffffff;
+   padding: 15px 10px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   border-bottom: 1px solid #2C2C2C;
+}
+
+/* Hamburger menu icon */
+.menu-icon {
+   display: flex;
+   flex-direction: column;
+   cursor: pointer;
+}
+
+.menu-icon div {
+   width: 25px;
+   height: 3px;
+   background-color: #ffffff;
+   margin: 3px 0;
+   transition: 0.3s;
+}
+
+.user-info {
+   color: #ffffff;
+}
+
+/* ========== 4. MAIN CONTENT AREA ========== */
+.main {
+   background-color: #121212;
+   color: #ffffff;
+   padding: 20px;
+   transition: margin-left 0.3s ease;
+}
+
+.main.shifted {
+   margin-left: 250px;
+}
