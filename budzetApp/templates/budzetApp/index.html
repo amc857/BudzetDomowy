@@ -2,61 +2,23 @@
 {% load static %}
 
 {% block title %}
-    Mein page
+    Home Budget
 {% endblock title %}
 
 {% block header %}
-<h1>Main menu</h1>
+<h1>Main Menu</h1>
 {% endblock header %}
 
 {% block side_menu %}
 <ul>
-    <li>
-        <a href="#" class="menu-item">
-            <i class="icon-summary"></i>
-            Summary
-        </a>
-    </li>
-    <li>
-        <a href="#" class="menu-item">
-            <i class="icon-budgets"></i>
-            Budgets
-        </a>
-    </li>
-    <li>
-        <a href="#" class="menu-item">
-            <i class="icon-transactions"></i>
-            Transactions
-        </a>
-    </li>
-    <li>
-        <a href="#" class="menu-item">
-            <i class="icon-reports"></i>
-            Reports
-        </a>
-    </li>
-    <li>
-        <a href="#" class="menu-item">
-            <i class="icon-debts"></i>
-            Debts
-        </a>
-    </li>
-    <li>
-        <a href="#" class="menu-item">
-            <i class="icon-users"></i>
-            Users
-        </a>
-    </li>
+    <li><a href="#" class="menu-item"><i class="icon-summary"></i>Summary</a></li>
+    <li><a href="#" class="menu-item"><i class="icon-budgets"></i>Budgets</a></li>
+    <li><a href="{% url 'budzetApp:add_transaction' %}" class="menu-item"><i class="icon-transactions"></i>Transactions</a></li>
+    <li><a href="#" class="menu-item"><i class="icon-reports"></i>Reports</a></li>
+    <li><a href="#" class="menu-item"><i class="icon-debts"></i>Debts</a></li>
+    <li><a href="#" class="menu-item"><i class="icon-users"></i>Users</a></li>
 </ul>
 {% endblock side_menu %}
-
-
-<!-- 
-   TODO:
-   - Jest to koncepcyjny układ dashboardu
-   - Wszystkie wyświetlane dane są wartościami przykładowymi
-   - Wymaga integracji z modelami bazy danych
--->
 
 {% block main %}
 <div class="dashboard-container">
@@ -65,7 +27,7 @@
         <div class="action-grid">
             <div class="action-card">
                 <i class="icon-add-transaction">➕</i>
-                <h3>Add Transaction</h3>
+                <h3><a href="{% url 'budzetApp:add_transaction' %}">Add Transaction</a></h3>
                 <p>Record a new expense or income</p>
             </div>
             <div class="action-card">
@@ -86,17 +48,17 @@
         <div class="summary-cards">
             <div class="summary-card income">
                 <h3>Total Income</h3>
-                <p class="amount">$5,420</p>
+                <p class="amount">${{ total_income|default:"0" }}</p>
                 <small>This month</small>
             </div>
             <div class="summary-card expenses">
                 <h3>Total Expenses</h3>
-                <p class="amount">$3,750</p>
+                <p class="amount">${{ total_expenses|default:"0" }}</p>
                 <small>This month</small>
             </div>
             <div class="summary-card balance">
                 <h3>Current Balance</h3>
-                <p class="amount">$1,670</p>
+                <p class="amount">${{ total_income|add:total_expenses|default:"0" }}</p>
                 <small>Net savings</small>
             </div>
         </div>
@@ -111,27 +73,26 @@
                     <th>Description</th>
                     <th>Category</th>
                     <th>Amount</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                {% for transaction in transactions %}
                 <tr>
-                    <td>2025-04-15</td>
-                    <td>Grocery Shopping</td>
-                    <td>Food</td>
-                    <td class="expense">-$120</td>
+                    <td>{{ transaction.transaction_date }}</td>
+                    <td>{{ transaction.description }}</td>
+                    <td>{{ transaction.category }}</td>
+                    <td class="{% if transaction.amount < 0 %}expense{% else %}income{% endif %}">
+                        {{ transaction.amount }}
+                    </td>
+                    <td>
+                        <a href="{% url 'budzetApp:edit_transaction' transaction.pk %}">Edit</a> |
+                        <a href="{% url 'budzetApp:delete_transaction' transaction.pk %}" onclick="return confirm('Delete this transaction?')">Delete</a>
+                    </td>
                 </tr>
-                <tr>
-                    <td>2025-04-12</td>
-                    <td>Salary</td>
-                    <td>Income</td>
-                    <td class="income">+$3,500</td>
-                </tr>
-                <tr>
-                    <td>2025-04-10</td>
-                    <td>Utility Bills</td>
-                    <td>Utilities</td>
-                    <td class="expense">-$250</td>
-                </tr>
+                {% empty %}
+                <tr><td colspan="5">No transactions yet.</td></tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

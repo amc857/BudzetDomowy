@@ -35,6 +35,9 @@
     <Compile Include="budzetApp\apps.py" />
     <Compile Include="budzetApp\migrations\__init__.py" />
     <Compile Include="budzetApp\models.py" />
+    <Compile Include="budzetApp\forms.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="budzetApp\tests.py" />
     <Compile Include="budzetApp\urls.py">
       <SubType>Code</SubType>
@@ -50,6 +53,7 @@
   <ItemGroup>
     <Content Include="budzetApp\templates\budzetApp\temp.html" />
     <Content Include="budzetApp\templates\budzetApp\index.html" />
+    <Content Include="budzetApp\templates\budzetApp\addtransaction.html" />
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
