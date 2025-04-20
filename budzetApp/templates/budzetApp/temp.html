@@ -1,43 +1,45 @@
-<!-- 
-    To jest template do robienia  stron, nie ruszać bo z tego biorą wszystkie html, wymieniac tylko bloki
--->
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock title %}</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-</head>
-<body>
-    <!-- Pasek na górze strony -->
-    <header class="navbar">
-        <!-- Ikona menu -->
-        <div class="menu-icon">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-        {% block header %}
-        {% endblock header %}
-        <div class="user-info">
-            {% block user-info %}
-            {% if user is not None %}<section>Hi, {{ user }} </section> {% else %} <section>Hi, unlogged!</section> {% endif %}
-            {% endblock user-info %}
-        </div>
-    </header>
+    <!-- 
+        To jest template do robienia  stron, nie ruszać bo z tego biorą wszystkie html, wymieniac tylko bloki
+    -->
+    {% load static %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}{% endblock title %}</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        {% block head %}{% endblock %}
+        <script src="{% static 'js/script.js' %}"></script>
+    </head>
+    <body>
+        <!-- Pasek na górze strony -->
+        <header class="navbar">
+            <!-- Ikona menu -->
+            <div class="menu-icon">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            {% block header %}
+            {% endblock header %}
+            <div class="user-info">
+                {% block user-info %}
+                {% if user is not None %}<section>Hi, {{ user }} </section> {% else %} <section>Hi, unlogged!</section> {% endif %}
+                {% endblock user-info %}
+            </div>
+        </header>
 
-    <!-- Menu boczne -->
-    <div class="side-menu" id="sideMenu">
-        {% block side_menu %}
-        {% endblock side_menu %}
-    </div>
+        <!-- Menu boczne -->
+        <div class="side-menu" id="sideMenu">
+            {% block side_menu %}
+            {% endblock side_menu %}
+        </div>
 
-    <!-- Główne pole -->
-    <div class="main">
-        {% block main %}
-        {% endblock main %}
-    </div>
-</body>
-</html>>
+        <!-- Główne pole -->
+        <div class="main">
+            {% block main %}
+            {% endblock main %}
+        </div>
+    </body>
+    </html>

@@ -9,3 +9,7 @@ from django.http import HttpResponseRedirect
 
 def index(request):
     return render(request,"budzetApp/index.html")
+
+
+def login(request):
+    return render(request, 'budzetApp/login.html')

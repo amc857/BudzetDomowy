@@ -1,19 +1,139 @@
 {% extends "budzetApp/temp.html" %}
+{% load static %}
 
 {% block title %}
     Mein page
 {% endblock title %}
 
-{% block main %}
-<div class="main">
-    <h1>Mein seit</h1>
-</div>
-{% endblock main %}
-
 {% block header %}
-<h1>Index</h1>
+<h1>Main menu</h1>
 {% endblock header %}
 
 {% block side_menu %}
-
+<ul>
+    <li>
+        <a href="#" class="menu-item">
+            <i class="icon-summary"></i>
+            Summary
+        </a>
+    </li>
+    <li>
+        <a href="#" class="menu-item">
+            <i class="icon-budgets"></i>
+            Budgets
+        </a>
+    </li>
+    <li>
+        <a href="#" class="menu-item">
+            <i class="icon-transactions"></i>
+            Transactions
+        </a>
+    </li>
+    <li>
+        <a href="#" class="menu-item">
+            <i class="icon-reports"></i>
+            Reports
+        </a>
+    </li>
+    <li>
+        <a href="#" class="menu-item">
+            <i class="icon-debts"></i>
+            Debts
+        </a>
+    </li>
+    <li>
+        <a href="#" class="menu-item">
+            <i class="icon-users"></i>
+            Users
+        </a>
+    </li>
+</ul>
 {% endblock side_menu %}
+
+
+<!-- 
+   TODO:
+   - Jest to koncepcyjny układ dashboardu
+   - Wszystkie wyświetlane dane są wartościami przykładowymi
+   - Wymaga integracji z modelami bazy danych
+-->
+
+{% block main %}
+<div class="dashboard-container">
+    <div class="quick-actions">
+        <h2>Quick Actions</h2>
+        <div class="action-grid">
+            <div class="action-card">
+                <i class="icon-add-transaction">➕</i>
+                <h3>Add Transaction</h3>
+                <p>Record a new expense or income</p>
+            </div>
+            <div class="action-card">
+                <i class="icon-create-budget">💰</i>
+                <h3>Create Budget</h3>
+                <p>Set up a new budget plan</p>
+            </div>
+            <div class="action-card">
+                <i class="icon-generate-report">📊</i>
+                <h3>Generate Report</h3>
+                <p>View financial summary</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-section">
+        <h2>Monthly Overview</h2>
+        <div class="summary-cards">
+            <div class="summary-card income">
+                <h3>Total Income</h3>
+                <p class="amount">$5,420</p>
+                <small>This month</small>
+            </div>
+            <div class="summary-card expenses">
+                <h3>Total Expenses</h3>
+                <p class="amount">$3,750</p>
+                <small>This month</small>
+            </div>
+            <div class="summary-card balance">
+                <h3>Current Balance</h3>
+                <p class="amount">$1,670</p>
+                <small>Net savings</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="recent-transactions">
+        <h2>Recent Transactions</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2025-04-15</td>
+                    <td>Grocery Shopping</td>
+                    <td>Food</td>
+                    <td class="expense">-$120</td>
+                </tr>
+                <tr>
+                    <td>2025-04-12</td>
+                    <td>Salary</td>
+                    <td>Income</td>
+                    <td class="income">+$3,500</td>
+                </tr>
+                <tr>
+                    <td>2025-04-10</td>
+                    <td>Utility Bills</td>
+                    <td>Utilities</td>
+                    <td class="expense">-$250</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock main %}
