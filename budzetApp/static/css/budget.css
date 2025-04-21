@@ -99,8 +99,11 @@
     }
  }
 
- /* ========== 2. CSS for Budget Form - Dark theme with purple accents  ========== */
 
+
+/* buttons groups*/
+
+ /* ========== 2. CSS for Budget Form - Dark theme with purple accents  ========== */
 
 
 /* Main dashboard container */
@@ -214,20 +217,24 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
+    
 }
 
-/* Individual budget card */
+/* Styl dla kart budżetu */
 .budget-card {
     background-color: #2C2C2C;
     padding: 15px;
     border-radius: 8px;
     text-align: center;
     transition: background-color 0.3s;
+    position: relative;
+    cursor: pointer !important;
 }
 
 /* Budget card hover state */
 .budget-card:hover {
     background-color: #3C3C3C;
+    
 }
 
 /* Budget icon styling */
@@ -253,6 +260,8 @@
 /* Card actions container */
 .card-actions {
     margin-top: 15px;
+    position: relative;
+    z-index: 10;
 }
 
 /* Delete button styling */
@@ -280,6 +289,35 @@
     font-style: italic;
 }
 
+/* Group controls styling */
+.group-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+
+/* Small button styling */
+.btn-small {
+    background-color: #6A1B9A;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-small:hover {
+    background-color: #8A2BE2;
+    transform: translateY(-1px);
+}
+
+/* Hide view button */
+.view-btn {
+    display: none;
+}
+
 /* Responsive adjustments */
 @media (max-width: 992px) {
     .budget-grid {
@@ -303,3 +341,5 @@
         font-size: 0.9rem;
     }
 }
+
+

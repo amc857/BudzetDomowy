@@ -1,0 +1,57 @@
+{% extends "budzetApp/temp.html" %}
+{% load static %}
+
+{% block title %}
+    Budget Details
+{% endblock title %}
+
+{% block header %}
+<h1>Budget Details: {{ budget.category.category_name }}</h1>
+{% endblock header %}
+
+{% block main %}
+<div class="budget-details-container">
+    <div class="budget-info">
+        <h2>Budget Information</h2>
+        <p><strong>Amount:</strong> {{ budget.budget_amount }} zł</p>
+        <p><strong>Category:</strong> {{ budget.category.category_name }} ({{ budget.category.category_type }})</p>
+        <p><strong>Group:</strong> {{ budget.group.group_name }}</p>
+        <p><strong>Date:</strong> {{ budget.date|date:"Y-m-d" }}</p>
+    </div>
+
+    <div class="budget-transactions">
+        <h2>Related Transactions</h2>
+        {% if transactions %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>User</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr>
+                        <td>{{ transaction.transaction_date }}</td>
+                        <td>{{ transaction.description }}</td>
+                        <td class="{% if transaction.amount < 0 %}expense{% else %}income{% endif %}">
+                            {{ transaction.amount }} zł
+                        </td>
+                        <td>{{ transaction.user.username }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No transactions for this budget yet.</p>
+        {% endif %}
+    </div>
+
+    <div class="budget-actions">
+        <a href="{% url 'budzetApp:delete_budget' budget.id %}" class="delete-btn" onclick="return confirm('Are you sure?')">Delete Budget</a>
+        <a href="{% url 'budzetApp:budget' %}" class="back-btn">Back to Budgets</a>
+    </div>
+</div>
+{% endblock main %}

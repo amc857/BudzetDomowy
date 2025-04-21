@@ -11,7 +11,9 @@
         {% block styles %}
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
         {% endblock styles %}
+        {% block scripts %}
         <script src="{% static 'js/script.js' %}"></script>
+        {% endblock scripts %}
     </head>
     <body>
         <!-- Pasek na górze strony -->
@@ -54,21 +56,9 @@
             </a>
         </li>
         <li>
-            <a href="#" class="menu-item">
-                <i class="icon-reports"></i>
-                Reports
-            </a>
-        </li>
-        <li>
-            <a href="#" class="menu-item">
-                <i class="icon-debts"></i>
-                Debts
-            </a>
-        </li>
-        <li>
-            <a href="#" class="menu-item">
+            <a href="{% url 'budzetApp:groups' %}" class="menu-item">
                 <i class="icon-users"></i>
-                Users
+                Groups
             </a>
         </li>
     </ul>

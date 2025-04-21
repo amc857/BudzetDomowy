@@ -1,15 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from budzetApp.models import Budget, Category, Group
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
 
-
 # Create your views here.
 
-def index(request):
-    return render(request,"budzetApp/index.html")
 
 
 def login(request):
@@ -27,21 +24,19 @@ def budget(request):
     }
 
     if request.method == 'POST':
-        # Pobierz dane z formularza
+
         budget_amount = request.POST.get('budget_amount')
         date = request.POST.get('date')
         category_id = request.POST.get('category')
         group_id = request.POST.get('group')
         
         try:
-            # Przekształć dane do odpowiednich typów
+
             budget_amount = float(budget_amount)
             
-            # Pobierz obiekty powiązane
             category = Category.objects.get(id=category_id)
             group = Group.objects.get(id=group_id)
-            
-            # Utwórz nowy budżet
+
             new_budget = Budget.objects.create(
                 budget_amount=budget_amount,
                 date=date,
@@ -63,13 +58,13 @@ def budget(request):
     
     return render(request, 'budzetApp/budget.html', context)
 
+
 def delete_budget(request, budget_id):
     try:
         budget = Budget.objects.get(id=budget_id)
         budget.delete()
         messages.success(request, "Budżet został pomyślnie usunięty.")
     except Budget.DoesNotExist:
-
         messages.error(request, "Budżet nie istnieje.")
         pass
     
@@ -77,5 +72,21 @@ def delete_budget(request, budget_id):
 
 
 
-def add_transaction(request):
-     return render(request,'budzetApp/addtransaction.html')
+def budget_details(request, budget_id):
+
+    budget = get_object_or_404(Budget, id=budget_id)
+
+    context = {
+        'budget': budget
+    }
+
+    return render(request, 'budzetApp/budget_details.html', context)
+
+
+def groups(request):
+    groups = Group.objects.all()
+    
+    context = {
+        'groups': groups
+    }
+    return render(request, 'budzetApp/groups.html', context)

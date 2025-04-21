@@ -7,15 +7,13 @@ from budzetApp.forms import TransactionForm
 
 
 def index(request):
-    # Pobierz wszystkie transakcje posortowane według daty (od najnowszej)
     transaction_list = Transaction.objects.all().order_by('-transaction_date')
-    
-    # Paginacja - 10 transakcji na stronę
+
     paginator = Paginator(transaction_list, 10)
     page_number = request.GET.get('page')
     transactions = paginator.get_page(page_number)
     
-    # Oblicz sumy dochodów i wydatków
+
     total_income = Transaction.objects.filter(
         amount__gt=0
     ).aggregate(Sum('amount'))['amount__sum'] or 0
@@ -24,7 +22,7 @@ def index(request):
         amount__lt=0
     ).aggregate(Sum('amount'))['amount__sum'] or 0
     
-    # Przygotuj kontekst dla szablonu
+
     context = {
         'transactions': transactions,
         'total_income': total_income,
