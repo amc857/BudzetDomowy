@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from budzetApp.models import Budget, Category, Group
+from budzetApp.models import Budget, Category, Group, User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
@@ -10,6 +10,33 @@ from django.contrib import messages
 
 
 def login(request):
+    
+    if request.method == 'POST':
+
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+
+
+        # Sprawdzenie, czy użytkownik istnieje w bazie danych
+        user = User.objects.filter(username=username, email=email, password=password)
+        if user.exists():
+
+            
+
+            request.session['username'] = username
+            request.session['email'] = email
+            request.session['password'] = password
+
+        
+
+            return redirect('budzetApp:index')
+        else:
+            # Użytkownik nie istnieje
+            messages.error(request, "Nie znaleziono użytkownika o podanych danych.")
+            return redirect('budzetApp:login')
+        
     return render(request, 'budzetApp/login.html')
 
 def budget(request):    

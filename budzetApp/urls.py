@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
@@ -9,9 +9,11 @@ from . import transaction_views
 app_name = "budzetApp"
 
 urlpatterns = [
+    
     path("", views.login, name='login'),
-    path("index/", transaction_views.index, name="index"),
+    path("login/", views.login, name='login'),
 
+    path("index/", transaction_views.index, name="index"),
     path("budget/", views.budget, name="budget"),
     path('budget/delete/<int:budget_id>/', views.delete_budget, name='delete_budget'),
     path('budget/details/<int:budget_id>/', views.budget_details, name='budget_details'),
