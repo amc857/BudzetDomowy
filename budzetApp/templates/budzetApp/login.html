@@ -1,9 +1,7 @@
-
-
 {% load static %}
 
 {% block title %}
-    Anmeldeseite
+    Login Page
 {% endblock title %}
 
 {% block styles %}
@@ -15,30 +13,29 @@
 
     <div class="main">
 
-        <h1>Willkommen auf der Anmeldeseite</h1>
+        <h1>Welcome to the Login Page</h1>
 
         <form class="login-form" method="post" action="{% url 'budzetApp:login' %}">
             {% csrf_token %}
             <div class="form-group">
-                <label for="username">Benutzername</label>
-                <input type="text" id="username" name="username" placeholder="Geben Sie Ihren Benutzernamen ein">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username">
             </div>
 
             <div class="form-group">
-                <label for="email">E-Mail</label>
-                <input type="email" id="email" name="email" placeholder="Geben Sie Ihre E-Mail ein">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email">
             </div>
 
             <div class="form-group">
-                <label for="password">Passwort</label>
-                <input type="password" id="password" name="password" placeholder="Geben Sie Ihr Passwort ein">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password">
             </div>
 
             <div class="form-actions">
-                <button type="submit">Zur Index wechseln</button>
+                <button type="submit">Go to Index</button>
             </div>
 
-            naciśnięcie przycisku przenosi dalej, nie trzeba się logować
         </form>
     </div>
 </div>
