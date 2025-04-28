@@ -267,6 +267,29 @@
 {% endblock styles %}
 
 {% block main %}
+
+<div class="summary-section">
+    <h2>Monthly Overview</h2>
+    <div class="summary-cards">
+        <div class="summary-card income">
+            <h3>Total Income</h3>
+            <p class="amount">${{ total_income|default:"0" }}</p>
+            <small>This month</small>
+        </div>
+        <div class="summary-card expenses">
+            <h3>Total Expenses</h3>
+            <p class="amount">${{ total_expenses|default:"0" }}</p>
+            <small>This month</small>
+        </div>
+        <div class="summary-card balance">
+            <h3>Current Balance</h3>
+            <p class="amount">${{ total_income|add:total_expenses|default:"0" }}</p>
+            <small>Net savings</small>
+        </div>
+    </div>
+</div>
+
+
 <div class="dashboard-container">
     <div class="quick-actions">
         <h2>Quick Actions</h2>
@@ -292,26 +315,6 @@
         </div>
     </div>
 
-    <div class="summary-section">
-        <h2>Monthly Overview</h2>
-        <div class="summary-cards">
-            <div class="summary-card income">
-                <h3>Total Income</h3>
-                <p class="amount">${{ total_income|default:"0" }}</p>
-                <small>This month</small>
-            </div>
-            <div class="summary-card expenses">
-                <h3>Total Expenses</h3>
-                <p class="amount">${{ total_expenses|default:"0" }}</p>
-                <small>This month</small>
-            </div>
-            <div class="summary-card balance">
-                <h3>Current Balance</h3>
-                <p class="amount">${{ total_income|add:total_expenses|default:"0" }}</p>
-                <small>Net savings</small>
-            </div>
-        </div>
-    </div>
 
     <div class="recent-transactions">
         <h2>Recent Transactions</h2>

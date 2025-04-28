@@ -3,6 +3,8 @@ from django.http import HttpResponseRedirect
 from budzetApp.models import Budget, Category, Group, User
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from .forms import UserRegistrationForm
+
 
 
 # Create your views here.
@@ -117,3 +119,18 @@ def groups(request):
         'groups': groups
     }
     return render(request, 'budzetApp/groups.html', context)
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+           
+            user = form.save(commit=False)
+            user.password = form.cleaned_data['password'] 
+            user.save()
+            messages.success(request, "Rejestracja zakończona sukcesem! Możesz się teraz zalogować.")
+            return redirect('budzetApp:login') 
+    else:
+        form = UserRegistrationForm()
+    return render(request, 'budzetApp/register.html', {'form': form})
