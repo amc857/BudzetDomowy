@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from budzetApp.models import Budget, Category, Group, User
+from budzetApp.models import Budget, Category, UserBudget, User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegistrationForm
@@ -44,7 +44,6 @@ def login(request):
 def budget(request):    
     budgets = Budget.objects.all()
     categories = Category.objects.all()
-    groups = Group.objects.all()
 
     context = {
         'budgets': budgets,
@@ -64,13 +63,11 @@ def budget(request):
             budget_amount = float(budget_amount)
             
             category = Category.objects.get(id=category_id)
-            group = Group.objects.get(id=group_id)
 
             new_budget = Budget.objects.create(
                 budget_amount=budget_amount,
                 date=date,
-                category=category,
-                group=group
+                category=category
             )
             
             messages.success(request, "Budżet został pomyślnie utworzony!")
@@ -80,8 +77,6 @@ def budget(request):
             messages.error(request, "Nieprawidłowa wartość kwoty budżetu.")
         except Category.DoesNotExist:
             messages.error(request, "Wybrana kategoria nie istnieje.")
-        except Group.DoesNotExist:
-            messages.error(request, "Wybrana grupa nie istnieje.")
         except Exception as e:
             messages.error(request, f"Wystąpił błąd: {str(e)}")
     
@@ -113,7 +108,6 @@ def budget_details(request, budget_id):
 
 
 def groups(request):
-    groups = Group.objects.all()
     
     context = {
         'groups': groups

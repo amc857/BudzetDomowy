@@ -5,7 +5,6 @@ from .models import *
 
 admin.site.register(User)
 admin.site.register(Category)
-admin.site.register(Group)
-admin.site.register(GroupMember)
+admin.site.register(UserBudget)
 admin.site.register(Budget)
 admin.site.register(Transaction)
