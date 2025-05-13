@@ -1,9 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
-from budzetApp.models import Budget, Category, UserBudget, User
+from budzetApp.models import Budget, BudgetTransaction, Category, Transaction, UserBudget, User
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import UserRegistrationForm
+from .forms import BudgetForm, UserRegistrationForm
 
 
 
@@ -41,80 +41,37 @@ def login(request):
         
     return render(request, 'budzetApp/login.html')
 
-def budget(request):    
-    budgets = Budget.objects.all()
-    categories = Category.objects.all()
-
-    context = {
-        'budgets': budgets,
-        'categories': categories,
-        'groups': groups
-    }
-
+def create_budget(request):
     if request.method == 'POST':
+        form = BudgetForm(request.POST)
+        if form.is_valid():
+            budget = form.save()
+            # Pobierz wybrane transakcje z formularza (np. za pomocą checkboxów)
+            selected_transactions = request.POST.getlist('transactions')  # Lista ID transakcji
+            for transaction_id in selected_transactions:
+                transaction = Transaction.objects.get(id=transaction_id)
+                BudgetTransaction.objects.create(budget=budget, transaction=transaction)
+            return redirect('budzetApp:budget_list')
+    else:
+        form = BudgetForm()
+        transactions = Transaction.objects.filter(user=request.user)  # Transakcje użytkownika
+    return render(request, 'budzetApp/create_budget.html', {'form': form})
 
-        budget_amount = request.POST.get('budget_amount')
-        date = request.POST.get('date')
-        category_id = request.POST.get('category')
-        group_id = request.POST.get('group')
-        
-        try:
+def budget_list(request):
+    budgets = Budget.objects.all()
+    budget_summaries = []
 
-            budget_amount = float(budget_amount)
-            
-            category = Category.objects.get(id=category_id)
+    for budget in budgets:
+        transactions = BudgetTransaction.objects.filter(budget=budget).select_related('transaction')
+        total_transactions = sum(bt.transaction.amount for bt in transactions)
+        budget_summaries.append({
+            'budget': budget,
+            'transactions': transactions,
+            'total_transactions': total_transactions,
+            'remaining': budget.budget_amount - total_transactions
+        })
 
-            new_budget = Budget.objects.create(
-                budget_amount=budget_amount,
-                date=date,
-                category=category
-            )
-            
-            messages.success(request, "Budżet został pomyślnie utworzony!")
-            return redirect('budzetApp:budget')
-        
-        except ValueError:
-            messages.error(request, "Nieprawidłowa wartość kwoty budżetu.")
-        except Category.DoesNotExist:
-            messages.error(request, "Wybrana kategoria nie istnieje.")
-        except Exception as e:
-            messages.error(request, f"Wystąpił błąd: {str(e)}")
-    
-    return render(request, 'budzetApp/budget.html', context)
-
-
-def delete_budget(request, budget_id):
-    try:
-        budget = Budget.objects.get(id=budget_id)
-        budget.delete()
-        messages.success(request, "Budżet został pomyślnie usunięty.")
-    except Budget.DoesNotExist:
-        messages.error(request, "Budżet nie istnieje.")
-        pass
-    
-    return redirect('budzetApp:budget')
-
-
-
-def budget_details(request, budget_id):
-
-    budget = get_object_or_404(Budget, id=budget_id)
-
-    context = {
-        'budget': budget
-    }
-
-    return render(request, 'budzetApp/budget_details.html', context)
-
-
-def groups(request):
-    
-    context = {
-        'groups': groups
-    }
-    return render(request, 'budzetApp/groups.html', context)
-
-
+    return render(request, 'budzetApp/budget_list.html', {'budget_summaries': budget_summaries})
 def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
