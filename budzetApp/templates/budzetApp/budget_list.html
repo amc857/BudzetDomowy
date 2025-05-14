@@ -7,35 +7,16 @@
 </head>
 <body>
     <h1>Twoje Budżety</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Kwota Budżetu</th>
-                <th>Suma Transakcji</th>
-                <th>Pozostało</th>
-                <th>Transakcje</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for summary in budget_summaries %}
-            <tr>
-                <td>{{ summary.budget.date }}</td>
-                <td>{{ summary.budget.budget_amount }}</td>
-                <td>{{ summary.total_transactions }}</td>
-                <td>{{ summary.remaining }}</td>
-                <td>
-                    <ul>
-                        {% for bt in summary.transactions %}
-                        <li>{{ bt.transaction.description }} - {{ bt.transaction.amount }}</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="5">Brak budżetów do wyświetlenia.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <ul>
+        {% for budget in budgets %}
+        <li>
+            {{ budget.name }} - {{ budget.budget_amount }} PLN ({{ budget.date }})
+            <a href="{% url 'budzetApp:transaction_list' budget.id %}">Zarządzaj transakcjami</a>
+        </li>
+        {% empty %}
+        <li>Brak budżetów do wyświetlenia.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'budzetApp:create_budget' %}">Dodaj nowy budżet</a>
 </body>
 </html>

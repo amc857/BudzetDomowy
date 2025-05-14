@@ -1,6 +1,7 @@
 from django import forms
-from .models import Budget, Transaction, User
+from .models import Budget, Transaction, User, UserBudget
 from django.core.exceptions import ValidationError
+from datetime import date
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -30,19 +31,28 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class BudgetForm(forms.ModelForm):
-    transactions = forms.ModelMultipleChoiceField(
-        queryset=Transaction.objects.none(),
+    members = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
         widget=forms.CheckboxSelectMultiple,
         required=False,
-        label="Wybierz transakcje"
+        label="Dodaj członków do budżetu"
     )
 
     class Meta:
         model = Budget
-        fields = ['budget_amount', 'date']
+        fields = ['name', 'budget_amount', 'date']
 
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)
-        super().__init__(*args, **kwargs)
-        if user:
-            self.fields['transactions'].queryset = Transaction.objects.filter(user=user)
+    def save(self, user, commit=True):
+        """
+        Zapisuje budżet i przypisuje właściciela oraz członków.
+        """
+        budget = super().save(commit=False)
+        if commit:
+            budget.save()
+            # Przypisz właściciela jako "owner"
+            UserBudget.objects.create(user=user, budget=budget, role='owner')
+            # Dodaj członków jako "viewer"
+            for member in self.cleaned_data['members']:
+                UserBudget.objects.create(user=member, budget=budget, role='viewer')
+            Budget.objects.create(name=self.cleaned_data['name'], budget_amount=self.cleaned_data['budget_amount'], date=self.cleaned_data['date'])
+        return budget
