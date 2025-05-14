@@ -10,6 +10,7 @@
     <table>
         <thead>
             <tr>
+                <th>Nazwa</th>
                 <th>Data</th>
                 <th>Kwota Budżetu</th>
                 <th>Suma Transakcji</th>
@@ -20,6 +21,7 @@
         <tbody>
             {% for summary in budget_summaries %}
             <tr>
+                <td>{{ summary.budget.name }}</td>
                 <td>{{ summary.budget.date }}</td>
                 <td>{{ summary.budget.budget_amount }}</td>
                 <td>{{ summary.total_transactions }}</td>
@@ -27,7 +29,7 @@
                 <td>
                     <ul>
                         {% for bt in summary.transactions %}
-                        <li>{{ bt.transaction.description }} - {{ bt.transaction.amount }}</li>
+                        <li>{{ bt.description }} - {{ bt.amount }}</li>
                         {% endfor %}
                     </ul>
                 </td>

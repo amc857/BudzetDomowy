@@ -1,7 +1,7 @@
 import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
-from budzetApp.models import Budget, BudgetTransaction, Category, Transaction, UserBudget, User
+from budzetApp.models import Budget, BudgetTransaction, Category, Transaction, UserBudget, User, Uzytkownicy
 from django.contrib import messages
 from .forms import BudgetForm, UserRegistrationForm
 from django.urls import reverse_lazy
@@ -11,12 +11,10 @@ from django.core.paginator import Paginator
 from budzetApp.models import Transaction, Category
 from budzetApp.forms import TransactionForm
 
-from django.contrib.auth.decorators import login_required
 
+from .models import Budzety, UzytkownikBudzetPolaczenia, Kategorie, Transakcje, Uzytkownicy
 
 # Create your views here.
-
-
 
 def login(request):
     
@@ -29,17 +27,10 @@ def login(request):
 
 
         # Sprawdzenie, czy użytkownik istnieje w bazie danych
-        user = User.objects.filter(username=username, email=email, password=password)
+        user = Uzytkownicy.objects.filter(username=username, email=email, password=password)
         if user.exists():
 
-            
-
-            request.session['username'] = username
-            request.session['email'] = email
-            request.session['password'] = password
             request.session['user_id'] = user.first().id 
-
-        
 
             return redirect('budzetApp:index')
         else:
@@ -54,24 +45,20 @@ def create_budget(request):
         form = BudgetForm(request.POST)
         if form.is_valid():
             budget = form.save()
-            # Pobierz wybrane transakcje z formularza (np. za pomocą checkboxów)
-            selected_transactions = request.POST.getlist('transactions')  # Lista ID transakcji
-            for transaction_id in selected_transactions:
-                transaction = Transaction.objects.get(id=transaction_id)
-                BudgetTransaction.objects.create(budget=budget, transaction=transaction)
+            
             return redirect('budzetApp:budget_list')
     else:
         form = BudgetForm()
-        transactions = Transaction.objects.filter(user=request.user)  # Transakcje użytkownika
+        transactions = Transakcje.objects.filter(user_id=request.session['user_id'])  # Transakcje użytkownika
     return render(request, 'budzetApp/create_budget.html', {'form': form})
 
 def budget_list(request):
-    budgets = Budget.objects.all()
+    budgets = Budzety.objects.all()
     budget_summaries = []
 
     for budget in budgets:
-        transactions = BudgetTransaction.objects.filter(budget=budget).select_related('transaction')
-        total_transactions = sum(bt.transaction.amount for bt in transactions)
+        transactions = Transakcje.objects.select_related('budget').filter(budget=budget.id)
+        total_transactions = sum(bt.amount for bt in transactions)
         budget_summaries.append({
             'budget': budget,
             'transactions': transactions,

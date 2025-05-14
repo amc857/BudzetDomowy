@@ -1,6 +1,9 @@
+from typing import Any
 from django import forms
 from .models import Budget, Transaction, User
 from django.core.exceptions import ValidationError
+
+from .models import Budzety, Transakcje, Uzytkownicy
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -30,19 +33,21 @@ class UserRegistrationForm(forms.ModelForm):
 
 
 class BudgetForm(forms.ModelForm):
-    transactions = forms.ModelMultipleChoiceField(
-        queryset=Transaction.objects.none(),
-        widget=forms.CheckboxSelectMultiple,
-        required=False,
-        label="Wybierz transakcje"
-    )
+    #transactions = forms.ModelMultipleChoiceField(
+    #    queryset=Transakcje.objects.filter(user_id=),
+    #    widget=forms.CheckboxSelectMultiple,
+    #    required=False,
+    #    label="Wybierz transakcje"
+    #)
 
     class Meta:
-        model = Budget
-        fields = ['budget_amount', 'date']
+        model = Budzety
+        fields = ["name", "budget_amount", "users" ]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['transactions'].queryset = Transaction.objects.filter(user=user)
+            self.fields['transactions'].queryset = Transakcje.objects.filter(user=user)
+    
+
