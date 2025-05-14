@@ -28,7 +28,7 @@
             {% endblock header %}
             <div class="user-info">
                 {% block user-info %}
-                {% if user is not None %}<section>Hi, {{ user }} </section> {% else %} <section>Hi, unlogged!</section> {% endif %}
+                
                 {% endblock user-info %}
             </div>
         </header>
@@ -36,27 +36,7 @@
    <!-- Menu boczne -->
    <div class="side-menu" id="sideMenu">
     {% block side_menu %}
-    <ul>
-        <li>
-            <a href="{% url 'budzetApp:index' %}" class="menu-item">
-                <i class="icon-summary"></i>
-                Summary
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'budzetApp:create_budget' %}" class="menu-item">
-                <i class="icon-budgets"></i>
-                Budgets
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">
-                <i class="icon-transactions"></i>
-                Transactions
-            </a>
-        </li>
-        
-    </ul>
+    
     {% endblock side_menu %}
 
 </div>

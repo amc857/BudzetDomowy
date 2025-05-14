@@ -298,7 +298,7 @@
                 <i class="icon-add-transaction">➕</i>
                 <h3>Add Transaction</h3>
                 <p>Record a new expense or income</p>
-                <a href="{% url 'budzetApp:addtransaction' %}" aria-label="Add transaction"></a>
+                <a href="{% url 'budzetApp:transaction_list' %}" aria-label="Add transaction"></a>
             </div>
             <div class="action-card create-budget">
                 <i class="icon-create-budget">💰</i>
@@ -306,7 +306,7 @@
                 <p>Set up a new budget plan</p>
                 <a href="{% url 'budzetApp:create_budget' %}" aria-label="Create budget"></a>
             </div>
-            
+
         </div>
     </div>
 
@@ -370,3 +370,28 @@
     </div>
 </div>
 {% endblock main %}
+
+
+{% block side_menu %}
+    <ul>
+        <li>
+            <a href="{% url 'budzetApp:index' %}" class="menu-item">
+                <i class="icon-summary"></i>
+                Summary
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'budzetApp:create_budget' %}" class="menu-item">
+                <i class="icon-budgets"></i>
+                Budgets
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">
+                <i class="icon-transactions"></i>
+                Transactions
+            </a>
+        </li>
+
+    </ul>
+{% endblock side_menu %}
