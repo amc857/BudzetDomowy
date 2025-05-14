@@ -38,8 +38,8 @@ def login(request):
             request.session['email'] = email
             request.session['password'] = password
             request.session['user_id'] = user.first().id 
-           
-            
+
+        
 
             return redirect('budzetApp:index')
         else:
@@ -53,20 +53,34 @@ def create_budget(request):
     if request.method == 'POST':
         form = BudgetForm(request.POST)
         if form.is_valid():
-            user1 = User.objects.filter(id=request.session['user_id']).first()  # Pobierz użytkownika na podstawie session
-            form.save(user=user1)  # Przekaż zalogowanego użytkownika jako właściciela
+            budget = form.save()
+            # Pobierz wybrane transakcje z formularza (np. za pomocą checkboxów)
+            selected_transactions = request.POST.getlist('transactions')  # Lista ID transakcji
+            for transaction_id in selected_transactions:
+                transaction = Transaction.objects.get(id=transaction_id)
+                BudgetTransaction.objects.create(budget=budget, transaction=transaction)
             return redirect('budzetApp:budget_list')
     else:
         form = BudgetForm()
+        transactions = Transaction.objects.filter(user=request.user)  # Transakcje użytkownika
     return render(request, 'budzetApp/create_budget.html', {'form': form})
 
 def budget_list(request):
-    user1 = User.objects.filter(id=request.session['user_id']).first()  # Pobierz użytkownika na podstawie session
-    user_budgets = UserBudget.objects.filter(user=user1)
-    budgets = [user_budget.budget for user_budget in user_budgets]
-    return render(request, 'budzetApp/budget_list.html', {'budgets': budgets})
+    budgets = Budget.objects.all()
+    budget_summaries = []
 
-def register(request):  #BYŁĄ ZMIANA BAZY DANYCH, DOSTOSOWAĆ DO NOWEJ
+    for budget in budgets:
+        transactions = BudgetTransaction.objects.filter(budget=budget).select_related('transaction')
+        total_transactions = sum(bt.transaction.amount for bt in transactions)
+        budget_summaries.append({
+            'budget': budget,
+            'transactions': transactions,
+            'total_transactions': total_transactions,
+            'remaining': budget.budget_amount - total_transactions
+        })
+
+    return render(request, 'budzetApp/budget_list.html', {'budget_summaries': budget_summaries})
+def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():

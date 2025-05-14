@@ -10,8 +10,18 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
+        <h3>Wybierz transakcje:</h3>
+        <ul>
+            {% for transaction in transactions %}
+            <li>
+                <label>
+                    <input type="checkbox" name="transactions" value="{{ transaction.id }}">
+                    {{ transaction.description }} - {{ transaction.amount }} ({{ transaction.category }})
+                </label>
+            </li>
+            {% endfor %}
+        </ul>
         <button type="submit">Zapisz</button>
     </form>
-    <a href="{% url 'budzetApp:budget_list' %}">Powrót do listy budżetów</a>
 </body>
 </html>
