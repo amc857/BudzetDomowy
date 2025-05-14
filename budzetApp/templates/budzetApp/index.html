@@ -373,25 +373,31 @@
 
 
 {% block side_menu %}
-    <ul>
-        <li>
-            <a href="{% url 'budzetApp:index' %}" class="menu-item">
-                <i class="icon-summary"></i>
-                Summary
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'budzetApp:create_budget' %}" class="menu-item">
-                <i class="icon-budgets"></i>
-                Budgets
-            </a>
-        </li>
-        <li>
-            <a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">
-                <i class="icon-transactions"></i>
-                Transactions
-            </a>
-        </li>
+<ul>
+    <li>
+        <a href="{% url 'budzetApp:index' %}" class="menu-item">
+            <i class="icon-summary"></i>
+            Summary
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'budzetApp:create_budget' %}" class="menu-item">
+            <i class="icon-budgets"></i>
+            Create Budgets
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'budzetApp:budget_list' %}" class="menu-item">
+            <i class="icon-budgets"></i>
+            Show Budgets
+        </a>
+    </li>
+    <li>
+        <a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">
+            <i class="icon-transactions"></i>
+            Transactions
+        </a>
+    </li>
 
-    </ul>
+</ul>
 {% endblock side_menu %}
