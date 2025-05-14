@@ -66,8 +66,7 @@ def budget_list(request):
             'remaining': budget.budget_amount - total_transactions
         })
 
-    return render(request, 'budzetApp/budget_list.html', {'budget_summaries': budget_summaries})
-def register(request):
+def register(request):  #BYŁĄ ZMIANA BAZY DANYCH, DOSTOSOWAĆ DO NOWEJ
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
