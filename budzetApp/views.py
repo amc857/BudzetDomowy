@@ -9,9 +9,8 @@ from django.urls import reverse_lazy
 from django.db.models import Sum
 from django.core.paginator import Paginator
 from budzetApp.models import Transaction, Category
-from budzetApp.forms import TransactionForm
 
-
+from .forms import TransakcjeForm
 from .models import Budzety, UzytkownikBudzetPolaczenia, Kategorie, Transakcje, Uzytkownicy
 
 # Create your views here.
@@ -112,22 +111,22 @@ def index(request):
 
 def add_transaction(request):
     if request.method == 'POST':
-        form = TransactionForm(request.POST)
+        form = TransakcjeForm(request.POST)
         if form.is_valid():
             transaction = form.save(commit=False)
-            if request.user.is_authenticated:
-                transaction.user = request.user
-            transaction.save()
-            return redirect('budzetApp:index')
+            # Pobierz użytkownika z sesji
+            user_id = request.session['user_id']
+            if user_id:
+                transaction.user = Uzytkownicy.objects.get(pk=user_id)
+                transaction.save()
+                return redirect('budzetApp:transaction_list')
+            else:
+                # Obsłuż brak użytkownika w sesji
+                messages.error(request, "Musisz być zalogowany, aby dodać transakcję.")
     else:
-        form = TransactionForm()
-    
-    context = {
-        'form': form,
-        'transaction': None,
-        'categories': Category.objects.all()
-    }
-    return render(request, 'budzetApp/addtransaction.html', context)
+        form = TransakcjeForm()
+    return render(request, 'budzetApp/addtransaction.html', {'form': form})
+
 
 def edit_transaction(request, pk):
     transaction = get_object_or_404(Transaction, pk=pk)
@@ -160,8 +159,13 @@ def delete_transaction(request, pk):
 
 
 def transaction_list(request):
-    if request.session.get('username'):
-        transactions = Transaction.objects.filter(user__id=request.session['user_id']).order_by('-transaction_date')
-        return render(request, 'budzetApp/transaction.html', {'transactions': transactions})
-    return redirect('budzetApp:index')
+    user_id = request.session['user_id']
+    transactions = []
+    if user_id:
+        user = Uzytkownicy.objects.get(pk=user_id)
+        transactions = Transakcje.objects.filter(user=user).order_by('-transaction_date')
+    context = {
+        'transactions': transactions
+    }
+    return render(request, 'budzetApp/transaction.html', context)
 

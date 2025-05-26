@@ -1,8 +1,16 @@
 {% extends "budzetApp/temp.html" %}
 {% load static %}
 
-{% block content %}
+{% block title %}
+Transakcje
+{% endblock %}
+
+{% block styles %}
 <link rel="stylesheet" href="{% static 'css/transaction_list.css' %}">
+{% endblock styles %}
+
+
+{% block main %}
 <h2>Twoje transakcje</h2>
 <table>
     <tr>
@@ -13,7 +21,7 @@
     </tr>
     {% for t in transactions %}
     <tr>
-        <td>{{ t.date }}</td>
+        <td>{{ t.transaction_date }}</td>
         <td>{{ t.category }}</td>
         <td>{{ t.amount }}</td>
         <td>{{ t.description }}</td>

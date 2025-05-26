@@ -56,7 +56,7 @@ class Transaction(models.Model):
     id = models.CharField(primary_key=True, max_length=36)  # UUID jako string
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    transaction_date = models.DateField()
+    transaction_date = models.DateField(auto_now_add=True)
     description = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -120,7 +120,7 @@ class Transakcje(models.Model):
     budget = models.ForeignKey(Budzety, on_delete=models.DO_NOTHING, null=True, blank=False)
     category = models.ForeignKey(Kategorie, on_delete=models.SET_NULL, null=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    transaction_date = models.DateField()
+    transaction_date = models.DateField(auto_now_add=True)
     description = models.TextField()
     user = models.ForeignKey(Uzytkownicy, on_delete=models.DO_NOTHING)
     def __str__(self):

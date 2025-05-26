@@ -20,6 +20,6 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('create_budget/', views.create_budget, name='create_budget'),
     path('budget_list/', views.budget_list, name='budget_list'),
-    path('transakcje/', views.transaction_list, name='transaction_list'),
+    path('transaction_list/', views.transaction_list, name='transaction_list'),
 
 ]

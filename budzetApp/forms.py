@@ -5,13 +5,12 @@ from django.core.exceptions import ValidationError
 
 from .models import Budzety, Transakcje, Uzytkownicy
 
-class TransactionForm(forms.ModelForm):
+
+class TransakcjeForm(forms.ModelForm):
     class Meta:
-        model = Transaction
-        fields = ['amount', 'transaction_date', 'description', 'category']
-        widgets = {
-            'transaction_date8': forms.DateInput(attrs={'type': 'date'}),
-        }
+        model = Transakcje
+        fields = ['budget', 'category', 'amount', 'description']
+
 
 
 class UserRegistrationForm(forms.ModelForm):
