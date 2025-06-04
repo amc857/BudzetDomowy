@@ -12,7 +12,11 @@ from django.core.paginator import Paginator
 from budzetApp.models import Transaction, Category
 
 from .forms import TransakcjeForm
-from .models import Budzety, UzytkownikBudzetPolaczenia, Kategorie, Transakcje, Uzytkownicy
+from .models import BudgetInvitation, Budzety, UzytkownikBudzetPolaczenia, Kategorie, Transakcje, Uzytkownicy
+
+import secrets
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 
@@ -41,15 +45,26 @@ def login(request):
     return render(request, 'budzetApp/login.html')
 
 def create_budget(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Musisz być zalogowany, aby utworzyć budżet.")
+        return redirect('budzetApp:login')
+
+    user = Uzytkownicy.objects.get(pk=user_id)
+
     if request.method == 'POST':
         form = BudgetForm(request.POST)
         if form.is_valid():
-            budget = form.save()
-            
+            budget = form.save(commit=False)
+            budget.save()
+            budget.users.set([user])  # Przypisz tylko aktualnego użytkownika
+            # Tworzenie 3 podstawowych kategorii
+            Kategorie.objects.create(category_name="Codzienne wydatki", budget=budget)
+            Kategorie.objects.create(category_name="Osobiste", budget=budget)
+            Kategorie.objects.create(category_name="Subskrypcje", budget=budget)
             return redirect('budzetApp:budget_list')
     else:
         form = BudgetForm()
-        transactions = Transakcje.objects.filter(user_id=request.session['user_id'])  # Transakcje użytkownika
     return render(request, 'budzetApp/create_budget.html', {'form': form})
 
 def budget_list(request):
@@ -265,3 +280,86 @@ def edit_profile(request):
         current_user = Uzytkownicy.objects.get(pk=user_id)
     # ...obsługa POST i walidacja...
     return render(request, 'budzetApp/edit_profile.html', {'current_user': current_user})
+
+
+
+def add_user_to_budget(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Musisz być zalogowany.")
+        return redirect('budzetApp:login')
+
+    user = Uzytkownicy.objects.get(pk=user_id)
+    user_budgets = Budzety.objects.filter(users=user)
+
+    selected_budget = None
+    current_users = []
+    if request.method == 'POST':
+        budget_id = request.POST.get('budget')
+        if budget_id:
+            selected_budget = Budzety.objects.get(pk=budget_id)
+            current_users = selected_budget.users.all()
+        form = AddUserToBudgetForm(request.POST, budgets_qs=user_budgets, selected_budget=selected_budget)
+        if form.is_valid():
+            selected_user = form.cleaned_data['user']
+            selected_budget = form.cleaned_data['budget']
+
+            # Generowanie tokena i zapis zaproszenia
+            token = secrets.token_urlsafe(32)
+            invitation = BudgetInvitation.objects.create(
+                invited_user=selected_user,
+                budget=selected_budget,
+                token=token
+            )
+
+            # Wysyłka e-maila z linkiem
+            invite_link = request.build_absolute_uri(
+                f"/accept_invitation/?token={token}"
+            )
+            send_mail(
+                subject="Zaproszenie do budżetu",
+                message=f"Otrzymałeś zaproszenie do budżetu '{selected_budget.name}'. Kliknij, aby dołączyć: {invite_link}",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[selected_user.email],
+                fail_silently=True,
+            )
+
+            messages.success(request, f"Zaproszenie zostało wysłane do {selected_user.username} ({selected_user.email}).")
+            return redirect('budzetApp:add_user_to_budget')
+    else:
+        form = AddUserToBudgetForm(budgets_qs=user_budgets)
+        budget_id = request.GET.get('budget')
+        if budget_id:
+            try:
+                selected_budget = Budzety.objects.get(pk=budget_id)
+                current_users = selected_budget.users.all()
+                form = AddUserToBudgetForm(budgets_qs=user_budgets, selected_budget=selected_budget)
+            except Budzety.DoesNotExist:
+                pass
+
+    return render(request, 'budzetApp/add_user_to_budget.html', {
+        'form': form,
+        'current_users': current_users,
+        'selected_budget': selected_budget,
+    })
+
+def accept_invitation(request):
+    token = request.GET.get('token')
+    invitation = get_object_or_404(BudgetInvitation, token=token, accepted=False)
+    user = invitation.invited_user
+    budget = invitation.budget
+
+    # Dodaj użytkownika do budżetu
+    budget.users.add(user)
+    invitation.accepted = True
+    invitation.save()
+    messages.success(request, f"Dołączyłeś do budżetu {budget.name}.")
+    return redirect('budzetApp:budget_list')
+
+def get_budget_categories(request):
+    budget_id = request.GET.get('budget_id')
+    categories = []
+    if budget_id:
+        categories = Kategorie.objects.filter(budget_id=budget_id)
+    data = [{'id': c.id, 'name': c.category_name} for c in categories]
+    return JsonResponse({'categories': data})

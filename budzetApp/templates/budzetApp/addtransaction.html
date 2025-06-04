@@ -21,3 +21,54 @@
 {% endif %}
 <a href="{% url 'budzetApp:transaction_list' %}">Powrót do listy transakcji</a>
 {% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const budgetSelect = document.getElementById('id_budget');
+        const categorySelect = document.getElementById('id_category');
+
+        // Zablokuj kategorię na starcie
+        categorySelect.disabled = true;
+
+        if (budgetSelect) {
+            budgetSelect.addEventListener('change', function() {
+                const budgetId = this.value;
+                if (budgetId) {
+                    categorySelect.disabled = false;
+                    fetchCategories(budgetId);
+                } else {
+                    categorySelect.disabled = true;
+                    categorySelect.innerHTML = '<option value="">Wybierz kategorię</option>';
+                }
+            });
+
+            // Jeśli coś jest wybrane na starcie (np. po walidacji)
+            if (budgetSelect.value) {
+                categorySelect.disabled = false;
+                fetchCategories(budgetSelect.value);
+            }
+        }
+
+        function fetchCategories(budgetId) {
+            if (!budgetId) {
+                categorySelect.innerHTML = '<option value="">Wybierz kategorię</option>';
+                categorySelect.disabled = true;
+                return;
+            }
+
+            fetch("{% url 'budzetApp:get_budget_categories' %}?budget_id=" + budgetId)
+                .then(response => response.json())
+                .then(data => {
+                    categorySelect.innerHTML = '<option value="">Wybierz kategorię</option>';
+                    data.categories.forEach(function(category) {
+                        const option = document.createElement('option');
+                        option.value = category.id;
+                        option.textContent = category.name;
+                        categorySelect.appendChild(option);
+                    });
+                });
+        }
+    });
+</script>
+    {% endblock %}

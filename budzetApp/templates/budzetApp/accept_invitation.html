@@ -1,0 +1,12 @@
+{% extends "budzetApp/temp.html" %}
+
+{% block main %}
+<h2>Dołączenie do budżetu</h2>
+{% if success %}
+    <p>Pomyślnie dołączyłeś do budżetu <strong>{{ budget.name }}</strong>.</p>
+    <a href="{% url 'budzetApp:budget_list' %}">Przejdź do listy budżetów</a>
+{% else %}
+    <p>Zaproszenie jest nieprawidłowe lub zostało już wykorzystane.</p>
+    <a href="{% url 'budzetApp:index' %}">Powrót na stronę główną</a>
+{% endif %}
+{% endblock %}

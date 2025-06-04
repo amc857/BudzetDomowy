@@ -47,7 +47,7 @@ class BudgetForm(forms.ModelForm):
 
     class Meta:
         model = Budzety
-        fields = ["name", "budget_amount", "users" ]
+        fields = ["name", "budget_amount"]
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

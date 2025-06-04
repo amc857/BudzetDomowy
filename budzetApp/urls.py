@@ -26,4 +26,6 @@ urlpatterns = [
     path('get_budget_users/', views.get_budget_users, name='get_budget_users'),
     path('logout/', views.logout_view, name='logout'),
     path('edit_profile/', views.edit_profile, name='edit_profile'),
+    path('accept_invitation/', views.accept_invitation, name='accept_invitation'),
+    path('get_budget_categories/', views.get_budget_categories, name='get_budget_categories'),
 ]

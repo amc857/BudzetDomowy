@@ -136,3 +136,9 @@ class UzytkownikBudzetPolaczenia(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.budget.name} as {self.role}"
 
+class BudgetInvitation(models.Model):
+    invited_user = models.ForeignKey(Uzytkownicy, on_delete=models.CASCADE, related_name='invitations')
+    budget = models.ForeignKey(Budzety, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64, unique=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    accepted = models.BooleanField(default=False)
