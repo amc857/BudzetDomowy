@@ -18,7 +18,8 @@ class UserRegistrationForm(forms.ModelForm):
     confirm_password = forms.CharField(widget=forms.PasswordInput, label="Potwierdź hasło")
 
     class Meta:
-        model = User
+        #model = User
+        model = Uzytkownicy
         fields = ['username', 'email', 'password']
 
     def clean(self):
