@@ -28,7 +28,32 @@
             {% endblock header %}
             <div class="user-info">
                 {% block user-info %}
-                
+                 {% if current_user %}
+    <div id="user-menu-container" style="position: relative; display: inline-block;">
+        <button id="user-menu-btn" style="background: none; border: none; font-weight: bold; cursor: pointer;">
+            {{ current_user.username }} &#x25BC;
+        </button>
+        <div id="user-dropdown" style="display: none; position: absolute; right: 0; background: #fff; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); min-width: 160px;">
+            <a href="{% url 'budzetApp:edit_profile' %}" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">Edytuj profil</a>
+            <a href="{% url 'budzetApp:logout' %}" style="display: block; padding: 10px 16px; color: #333; text-decoration: none;">Wyloguj</a>
+        </div>
+    </div>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('user-menu-btn');
+        const dropdown = document.getElementById('user-dropdown');
+        if(btn && dropdown) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            });
+            document.addEventListener('click', function() {
+                dropdown.style.display = 'none';
+            });
+        }
+    });
+    </script>
+    {% endif %}
                 {% endblock user-info %}
             </div>
         </header>

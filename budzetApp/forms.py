@@ -72,3 +72,17 @@ class KategorieCreateForm(forms.ModelForm):
             self.fields['budget'].queryset = budgets_qs
     
 
+class AddUserToBudgetForm(forms.Form):
+    user = forms.ModelChoiceField(queryset=Uzytkownicy.objects.none(), label="Użytkownik")
+    budget = forms.ModelChoiceField(queryset=Budzety.objects.all(), label="Budżet")
+
+    def __init__(self, *args, **kwargs):
+        budgets_qs = kwargs.pop('budgets_qs', None)
+        selected_budget = kwargs.pop('selected_budget', None)
+        super().__init__(*args, **kwargs)
+        if budgets_qs is not None:
+            self.fields['budget'].queryset = budgets_qs
+        if selected_budget:
+            self.fields['user'].queryset = Uzytkownicy.objects.exclude(budzety=selected_budget)
+        else:
+            self.fields['user'].queryset = Uzytkownicy.objects.all()

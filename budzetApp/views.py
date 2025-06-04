@@ -1,9 +1,10 @@
 import re
+from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from budzetApp.models import Budget, BudgetTransaction, Category, Transaction, UserBudget, User, Uzytkownicy
 from django.contrib import messages
-from .forms import BudgetForm, KategorieCreateForm, UserRegistrationForm
+from .forms import AddUserToBudgetForm, BudgetForm, KategorieCreateForm, UserRegistrationForm
 from django.urls import reverse_lazy
 
 from django.db.models import Sum
@@ -90,21 +91,23 @@ def register(request):
 
 #-----------------------------------------------------------
 def index(request):
-    transaction_list = Transaction.objects.all().order_by('-transaction_date')
+    user = None
+    user_id = request.session.get('user_id')
+    if user_id:
+        user = Uzytkownicy.objects.get(pk=user_id)
 
+    transaction_list = Transaction.objects.all().order_by('-transaction_date')
     paginator = Paginator(transaction_list, 10)
     page_number = request.GET.get('page')
     transactions = paginator.get_page(page_number)
-    
 
     total_income = Transaction.objects.filter(
         amount__gt=0
     ).aggregate(Sum('amount'))['amount__sum'] or 0
-    
+
     total_expenses = Transaction.objects.filter(
         amount__lt=0
     ).aggregate(Sum('amount'))['amount__sum'] or 0
-    
 
     context = {
         'transactions': transactions,
@@ -112,8 +115,9 @@ def index(request):
         'total_expenses': total_expenses,
         'is_paginated': transactions.has_other_pages(),
         'page_obj': transactions,
+        'current_user': user,
     }
-    
+
     return render(request, 'budzetApp/index.html', context)
 
 def add_transaction(request):
@@ -196,3 +200,68 @@ def create_category(request):
         form = KategorieCreateForm(budgets_qs=user_budgets)
     return render(request, 'budzetApp/create_category.html', {'form': form})
 
+def add_user_to_budget(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Musisz być zalogowany.")
+        return redirect('budzetApp:login')
+
+    user = Uzytkownicy.objects.get(pk=user_id)
+    user_budgets = Budzety.objects.filter(users=user)
+
+    selected_budget = None
+    current_users = []
+    if request.method == 'POST':
+        budget_id = request.POST.get('budget')
+        if budget_id:
+            selected_budget = Budzety.objects.get(pk=budget_id)
+            current_users = selected_budget.users.all()
+        form = AddUserToBudgetForm(request.POST, budgets_qs=user_budgets, selected_budget=selected_budget)
+        if form.is_valid():
+            selected_user = form.cleaned_data['user']
+            selected_budget = form.cleaned_data['budget']
+            selected_budget.users.add(selected_user)
+            messages.success(request, f"Użytkownik {selected_user.username} został dodany do budżetu {selected_budget.name}.")
+            return redirect('budzetApp:add_user_to_budget')  # Odśwież, by zobaczyć aktualną listę
+    else:
+        form = AddUserToBudgetForm(budgets_qs=user_budgets)
+        # Jeśli GET z parametrem budget, pokaż obecnych użytkowników
+        budget_id = request.GET.get('budget')
+        if budget_id:
+            try:
+                selected_budget = Budzety.objects.get(pk=budget_id)
+                current_users = selected_budget.users.all()
+                form = AddUserToBudgetForm(budgets_qs=user_budgets, selected_budget=selected_budget)
+            except Budzety.DoesNotExist:
+                pass
+
+    return render(request, 'budzetApp/add_user_to_budget.html', {
+        'form': form,
+        'current_users': current_users,
+        'selected_budget': selected_budget,
+    })
+
+def get_budget_users(request):
+    budget_id = request.GET.get('budget_id')
+    users_list = []
+    if budget_id:
+        try:
+            budget = Budzety.objects.get(pk=budget_id)
+            users = budget.users.all()
+            users_list = [{'username': u.username} for u in users]
+        except Budzety.DoesNotExist:
+            pass
+    return JsonResponse({'users': users_list})
+
+
+def logout_view(request):
+    request.session.flush()
+    return render(request, 'budzetApp/logout.html')
+
+def edit_profile(request):
+    user_id = request.session.get('user_id')
+    current_user = None
+    if user_id:
+        current_user = Uzytkownicy.objects.get(pk=user_id)
+    # ...obsługa POST i walidacja...
+    return render(request, 'budzetApp/edit_profile.html', {'current_user': current_user})

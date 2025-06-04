@@ -1,0 +1,7 @@
+{% extends "budzetApp/temp.html" %}
+
+{% block main %}
+<h2>Zostałeś wylogowany</h2>
+<p>Pomyślnie wylogowano z aplikacji.</p>
+<a href="{% url 'budzetApp:login' %}">Zaloguj się ponownie</a>
+{% endblock %}

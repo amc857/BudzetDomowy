@@ -1,0 +1,33 @@
+{% extends "budzetApp/temp.html" %}
+{% load static %}
+
+{% block main %}
+<h2>Edytuj profil</h2>
+
+<p><strong>Obecny login:</strong> {{ current_user.username }}</p>
+<p><strong>Obecny email:</strong> {{ current_user.email }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <th>Nazwa użytkownika:</th>
+            <td><input type="text" name="username" value="{{ current_user.username }}" required></td>
+        </tr>
+        <tr>
+            <th>Email:</th>
+            <td><input type="email" name="email" value="{{ current_user.email }}" required></td>
+        </tr>
+        <tr>
+            <th>Nowe hasło:</th>
+            <td><input type="password" name="password"></td>
+        </tr>
+        <tr>
+            <th>Potwierdź hasło:</th>
+            <td><input type="password" name="confirm_password"></td>
+        </tr>
+    </table>
+    <button type="submit">Zapisz zmiany</button>
+</form>
+<a href="{% url 'budzetApp:index' %}">Powrót</a>
+{% endblock %}

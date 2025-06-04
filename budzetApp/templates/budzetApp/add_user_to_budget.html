@@ -1,0 +1,62 @@
+{% extends "budzetApp/temp.html" %}
+{% block main %}
+<h2>Dodaj użytkownika do budżetu</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Dodaj</button>
+</form>
+
+<div id="budget-users-section" style="display:none;">
+    <h3>Użytkownicy już przypisani do budżetu: <span id="budget-name"></span></h3>
+    <ul id="budget-users-list">
+        <li>Brak użytkowników w tym budżecie.</li>
+    </ul>
+</div>
+
+<a href="{% url 'budzetApp:budget_list' %}">Powrót do listy budżetów</a>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const budgetSelect = document.getElementById('id_budget');
+    const usersSection = document.getElementById('budget-users-section');
+    const usersList = document.getElementById('budget-users-list');
+    const budgetName = document.getElementById('budget-name');
+
+    function fetchUsers(budgetId, budgetText) {
+        if (!budgetId) {
+            usersSection.style.display = 'none';
+            return;
+        }
+        fetch("{% url 'budzetApp:get_budget_users' %}?budget_id=" + budgetId)
+            .then(response => response.json())
+            .then(data => {
+                usersSection.style.display = 'block';
+                budgetName.textContent = budgetText;
+                usersList.innerHTML = '';
+                if (data.users.length === 0) {
+                    usersList.innerHTML = '<li>Brak użytkowników w tym budżecie.</li>';
+                } else {
+                    data.users.forEach(function(user) {
+                        const li = document.createElement('li');
+                        li.textContent = user.username;
+                        usersList.appendChild(li);
+                    });
+                }
+            });
+    }
+
+    if (budgetSelect) {
+        budgetSelect.addEventListener('change', function() {
+            const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
+            fetchUsers(this.value, selectedOption.text);
+        });
+        // Jeśli coś jest wybrane na starcie (np. po walidacji)
+        if (budgetSelect.value) {
+            const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
+            fetchUsers(budgetSelect.value, selectedOption.text);
+        }
+    }
+});
+</script>
+{% endblock %}

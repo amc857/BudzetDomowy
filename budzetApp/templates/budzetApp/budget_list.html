@@ -28,9 +28,9 @@
                 <td>{{ summary.remaining }}</td>
                 <td>
                     <ul>
-                        {% for bt in summary.transactions %}
-                        <li>{{ bt.description }} - {{ bt.amount }}</li>
-                        {% endfor %}
+                    {% for bt in summary.transactions %}
+                    <li>{{ bt.description }} - {{ bt.amount }} ({{ bt.user.username }})</li>
+                    {% endfor %}
                     </ul>
                 </td>
             </tr>

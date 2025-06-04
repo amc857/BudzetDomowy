@@ -22,5 +22,8 @@ urlpatterns = [
     path('budget_list/', views.budget_list, name='budget_list'),
     path('transaction_list/', views.transaction_list, name='transaction_list'),
     path('create_category/', views.create_category, name='create_category'),
-
+    path('add_user_to_budget/', views.add_user_to_budget, name='add_user_to_budget'),
+    path('get_budget_users/', views.get_budget_users, name='get_budget_users'),
+    path('logout/', views.logout_view, name='logout'),
+    path('edit_profile/', views.edit_profile, name='edit_profile'),
 ]
