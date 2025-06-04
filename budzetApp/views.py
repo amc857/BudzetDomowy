@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseRedirect
 from budzetApp.models import Budget, BudgetTransaction, Category, Transaction, UserBudget, User, Uzytkownicy
 from django.contrib import messages
-from .forms import BudgetForm, UserRegistrationForm
+from .forms import BudgetForm, KategorieCreateForm, UserRegistrationForm
 from django.urls import reverse_lazy
 
 from django.db.models import Sum
@@ -20,13 +20,13 @@ def login(request):
     if request.method == 'POST':
 
         username = request.POST.get('username')
-        email = request.POST.get('email')
+        #email = request.POST.get('email')
         password = request.POST.get('password')
 
 
 
         # Sprawdzenie, czy użytkownik istnieje w bazie danych
-        user = Uzytkownicy.objects.filter(username=username, email=email, password=password)
+        user = Uzytkownicy.objects.filter(username=username, password=password)
         if user.exists():
 
             request.session['user_id'] = user.first().id 
@@ -52,7 +52,12 @@ def create_budget(request):
     return render(request, 'budzetApp/create_budget.html', {'form': form})
 
 def budget_list(request):
-    budgets = Budzety.objects.all()
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return redirect('budzetApp:login')
+
+    user = Uzytkownicy.objects.get(pk=user_id)
+    budgets = Budzety.objects.filter(users=user)
     budget_summaries = []
 
     for budget in budgets:
@@ -64,6 +69,8 @@ def budget_list(request):
             'total_transactions': total_transactions,
             'remaining': budget.budget_amount - total_transactions
         })
+
+    return render(request, 'budzetApp/budget_list.html', {'budget_summaries': budget_summaries})
 
     return render(request, 'budzetApp/budget_list.html', {'budget_summaries': budget_summaries})
 def register(request):
@@ -110,21 +117,24 @@ def index(request):
     return render(request, 'budzetApp/index.html', context)
 
 def add_transaction(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Musisz być zalogowany, aby dodać transakcję.")
+        return redirect('budzetApp:login')
+
+    user = Uzytkownicy.objects.get(pk=user_id)
+    # Budżety utworzone przez użytkownika lub do których ma dostęp
+    budgets_qs = Budzety.objects.filter(users=user).distinct()
+
     if request.method == 'POST':
-        form = TransakcjeForm(request.POST)
+        form = TransakcjeForm(request.POST, budgets_qs=budgets_qs)
         if form.is_valid():
             transaction = form.save(commit=False)
-            # Pobierz użytkownika z sesji
-            user_id = request.session['user_id']
-            if user_id:
-                transaction.user = Uzytkownicy.objects.get(pk=user_id)
-                transaction.save()
-                return redirect('budzetApp:transaction_list')
-            else:
-                # Obsłuż brak użytkownika w sesji
-                messages.error(request, "Musisz być zalogowany, aby dodać transakcję.")
+            transaction.user = user
+            transaction.save()
+            return redirect('budzetApp:transaction_list')
     else:
-        form = TransakcjeForm()
+        form = TransakcjeForm(budgets_qs=budgets_qs)
     return render(request, 'budzetApp/addtransaction.html', {'form': form})
 
 
@@ -168,4 +178,21 @@ def transaction_list(request):
         'transactions': transactions
     }
     return render(request, 'budzetApp/transaction.html', context)
+
+def create_category(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Musisz być zalogowany, aby dodać kategorię.")
+        return redirect('budzetApp:login')
+
+    user = Uzytkownicy.objects.get(pk=user_id)
+    user_budgets = Budzety.objects.filter(users=user)
+    if request.method == 'POST':
+        form = KategorieCreateForm(request.POST, budgets_qs=user_budgets)
+        if form.is_valid():
+            form.save()
+            return redirect('budzetApp:budget_list')
+    else:
+        form = KategorieCreateForm(budgets_qs=user_budgets)
+    return render(request, 'budzetApp/create_category.html', {'form': form})
 

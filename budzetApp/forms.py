@@ -1,6 +1,6 @@
 from typing import Any
 from django import forms
-from .models import Budget, Transaction, User
+from .models import Budget, Kategorie, Transaction, User
 from django.core.exceptions import ValidationError
 
 from .models import Budzety, Transakcje, Uzytkownicy
@@ -11,6 +11,11 @@ class TransakcjeForm(forms.ModelForm):
         model = Transakcje
         fields = ['budget', 'category', 'amount', 'description']
 
+    def __init__(self, *args, **kwargs):
+        budgets_qs = kwargs.pop('budgets_qs', None)
+        super().__init__(*args, **kwargs)
+        if budgets_qs is not None:
+            self.fields['budget'].queryset = budgets_qs
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -20,7 +25,7 @@ class UserRegistrationForm(forms.ModelForm):
     class Meta:
         #model = User
         model = Uzytkownicy
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'password']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -49,5 +54,21 @@ class BudgetForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['transactions'].queryset = Transakcje.objects.filter(user=user)
+
+
+class KategorieCreateForm(forms.ModelForm):
+    class Meta:
+        model = Kategorie
+        fields = ['category_name', 'budget']
+        labels = {
+            'category_name': 'Nazwa kategorii',
+            'budget': 'Budżet',
+        }
+
+    def __init__(self, *args, **kwargs):
+        budgets_qs = kwargs.pop('budgets_qs', None)
+        super().__init__(*args, **kwargs)
+        if budgets_qs is not None:
+            self.fields['budget'].queryset = budgets_qs
     
 

@@ -21,5 +21,6 @@ urlpatterns = [
     path('create_budget/', views.create_budget, name='create_budget'),
     path('budget_list/', views.budget_list, name='budget_list'),
     path('transaction_list/', views.transaction_list, name='transaction_list'),
+    path('create_category/', views.create_category, name='create_category'),
 
 ]

@@ -1,0 +1,23 @@
+{% extends "budzetApp/temp.html" %}
+{% load static %}
+
+{% block main %}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<h2>Dodaj kategorię</h2>
+<form method="post">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <button type="submit">Dodaj</button>
+</form>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+        {{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<a href="{% url 'budzetApp:budget_list' %}">Powrót do listy budżetów</a>
+{% endblock %}
