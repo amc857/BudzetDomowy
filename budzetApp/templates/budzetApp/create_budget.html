@@ -1,27 +1,27 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Utwórz Budżet</title>
-</head>
-<body>
-    <h1>Utwórz Budżet</h1>
-    <form method="post">
+{% extends "budzetApp/temp.html" %}
+{% load static %}
+
+{% block main %}
+<link rel="stylesheet" href="{% static 'css/budget.css' %}">
+<div class="budget-form-container">
+    <h1>Create Budget</h1>
+    <form method="post" class="budget-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <h3>Wybierz transakcje:</h3>
-        <ul>
-            {% for transaction in transactions %}
-            <li>
-                <label>
-                    <input type="checkbox" name="transactions" value="{{ transaction.id }}">
-                    {{ transaction.description }} - {{ transaction.amount }} ({{ transaction.category }})
-                </label>
-            </li>
-            {% endfor %}
-        </ul>
-        <button type="submit">Zapisz</button>
+        {% for field in form %}
+        <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="error-message">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+
+
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Save Budget</button>
+        </div>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}

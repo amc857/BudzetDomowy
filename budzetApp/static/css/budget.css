@@ -1,345 +1,154 @@
-/* ========== 1. CSS for Budget Form - Dark theme with purple accents  ========== */
-
-/* Main container for the budget form section */
-.budget-section {
-    background-color: #1A1A1A;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    margin-bottom: 25px;
- }
- 
- /* Heading for the budget section */
- .budget-section h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.3rem;
+/* Styl dla formularza tworzenia budżetu - ciemny motyw z fioletowymi akcentami */
+.budget-form-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #1E1E1E;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     color: #ffffff;
-    border-bottom: 1px solid #333333;
-    padding-bottom: 8px;
- }
- 
- /* Container for the budget form with centered layout */
- .budget-form {
-    max-width: 550px;
-    margin: 0 auto;
- }
- 
- /* Container for each form field group */
- .form-group {
-    margin-bottom: 15px;
- }
- 
- /* Style for form labels */
- .form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #cccccc;
- }
- 
- /* Common styles for input and select fields */
- .form-group input, 
- .form-group select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #333333;
-    background-color: #252525;
-    color: #ffffff;
-    font-size: 0.95rem;
-    box-sizing: border-box; /* Ensures padding is included in width calculation */
- }
- 
- /* Additional styles for select fields to ensure proper sizing */
- .form-group select {
-    width: 100%; /* Ensures select elements are same width as inputs */
- }
- 
- /* Focus state styles for form fields */
- .form-group input:focus, 
- .form-group select:focus {
-    outline: none;
-    border-color: #8A2BE2; /* Purple highlight color */
-    box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
- }
- 
- /* Submit button styling */
- .submit-btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #8A2BE2; /* Purple button color */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
- }
- 
- /* Hover state for submit button */
- .submit-btn:hover {
-    background-color: #6A1B9A; /* Darker purple on hover */
-    transform: translateY(-1px);
- }
- 
- /* Responsive adjustments for mobile devices */
- @media (max-width: 768px) {
-    .form-group {
-        margin-bottom: 12px;
+}
+
+    .budget-form-container h1 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+        font-size: 1.8rem;
+        border-bottom: 2px solid #8A2BE2;
+        padding-bottom: 10px;
     }
-    
-    .form-group input, 
-    .form-group select,
-    .submit-btn {
-        padding: 8px;
-        font-size: 0.9rem;
-    }
- }
 
-
-
-/* buttons groups*/
-
- /* ========== 2. CSS for Budget Form - Dark theme with purple accents  ========== */
-
-
-/* Main dashboard container */
-.dashboard-container {
+.budget-form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    color: #ffffff;
+    gap: 1.5rem;
 }
 
-/* Form section styling */
-.budget-section {
-    background-color: #1E1E1E;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.budget-section h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: #ffffff;
-    border-bottom: 1px solid #333333;
-    padding-bottom: 10px;
-}
+    .form-field label {
+        font-weight: 600;
+        color: #cccccc;
+    }
 
-/* Form container */
-.budget-form {
-    max-width: 550px;
-    margin: 0 auto;
-}
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #333333;
+        border-radius: 6px;
+        font-size: 1rem;
+        background-color: #252525;
+        color: #ffffff;
+        transition: all 0.3s ease;
+    }
 
-/* Form group for each input field */
-.form-group {
-    margin-bottom: 15px;
-}
+        .form-field input:focus,
+        .form-field select:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #8A2BE2;
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        }
 
-/* Label styling */
-.form-group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
+.transactions-section h3 {
+    margin: 1.5rem 0 1rem;
     color: #cccccc;
+    font-size: 1.2rem;
 }
 
-/* Input and select fields */
-.form-group input, 
-.form-group select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #333333;
+.transactions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.transaction-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
     background-color: #252525;
-    color: #ffffff;
-    font-size: 0.95rem;
-    box-sizing: border-box;
-}
-
-/* Focus state for form fields */
-.form-group input:focus, 
-.form-group select:focus {
-    outline: none;
-    border-color: #8A2BE2;
-    box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.2);
-}
-
-/* Submit button styling */
-.submit-btn {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    background-color: #8A2BE2;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.95rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-/* Submit button hover state */
-.submit-btn:hover {
-    background-color: #6A1B9A;
-    transform: translateY(-2px);
-}
-
-/* Budget display section */
-.existing-budgets {
-    background-color: #1E1E1E;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.existing-budgets h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.5rem;
-    color: #ffffff;
-    border-bottom: 1px solid #333333;
-    padding-bottom: 10px;
-}
-
-/* Budget cards grid */
-.budget-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    
-}
-
-/* Styl dla kart budżetu */
-.budget-card {
-    background-color: #2C2C2C;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
+    border-radius: 6px;
     transition: background-color 0.3s;
-    position: relative;
-    cursor: pointer !important;
 }
 
-/* Budget card hover state */
-.budget-card:hover {
-    background-color: #3C3C3C;
-    
-}
+    .transaction-item:hover {
+        background-color: #2d2d2d;
+    }
 
-/* Budget icon styling */
-.budget-icon {
-    font-size: 2rem;
-    margin-bottom: 10px;
-    display: block;
-}
+    .transaction-item label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        cursor: pointer;
+    }
 
-/* Budget card heading */
-.budget-card h3 {
-    color: #8A2BE2;
-    margin: 10px 0;
-    font-size: 1.3rem;
-}
+    .transaction-item input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+    }
 
-/* Budget card text */
-.budget-card p {
-    color: #cccccc;
-    margin: 5px 0;
-}
-
-/* Card actions container */
-.card-actions {
-    margin-top: 15px;
-    position: relative;
-    z-index: 10;
-}
-
-/* Delete button styling */
-.delete-btn {
-    display: inline-block;
-    padding: 6px 12px;
-    background-color: #F44336;
-    color: white;
-    border-radius: 4px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.2s;
-}
-
-/* Delete button hover state */
-.delete-btn:hover {
-    background-color: #D32F2F;
-}
-
-/* Empty state message */
-.empty-message {
-    text-align: center;
-    color: #999;
-    padding: 30px;
-    font-style: italic;
-}
-
-/* Group controls styling */
-.group-controls {
+.transaction-details {
+    flex-grow: 1;
     display: flex;
     justify-content: space-between;
-    margin-top: 8px;
 }
 
-/* Small button styling */
-.btn-small {
-    background-color: #6A1B9A;
+.transaction-amount {
+    font-weight: 600;
+    color: #8A2BE2;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 1.5rem;
+}
+
+.btn-submit {
+    background-color: #8A2BE2;
     color: white;
-    padding: 6px 12px;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.85rem;
-    font-weight: bold;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
-.btn-small:hover {
-    background-color: #8A2BE2;
-    transform: translateY(-1px);
-}
-
-/* Hide view button */
-.view-btn {
-    display: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 992px) {
-    .budget-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .btn-submit:hover {
+        background-color: #6A1B9A;
+        transform: translateY(-2px);
     }
-}
 
+/* Responsywność */
 @media (max-width: 768px) {
-    .budget-grid {
-        grid-template-columns: 1fr;
+    .budget-form-container {
+        padding: 1.5rem;
+        margin: 1rem;
     }
-    
-    .form-group {
-        margin-bottom: 12px;
+
+    .transaction-details {
+        flex-direction: column;
+        gap: 0.25rem;
     }
-    
-    .form-group input, 
-    .form-group select,
-    .submit-btn {
-        padding: 8px;
-        font-size: 0.9rem;
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-submit {
+        width: 100%;
     }
 }
-
-

@@ -2,29 +2,39 @@
 {% load static %}
 
 {% block main %}
-<link rel="stylesheet" href="{% static 'css/transaction_form.css' %}">
-<h2>Dodaj transakcję</h2>
-<form method="post">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <button type="submit">Dodaj</button>
-</form>
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
-        {{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-<a href="{% url 'budzetApp:transaction_list' %}">Powrót do listy transakcji</a>
+<link rel="stylesheet" href="{% static 'css/addtransaction.css' %}">
+<div class="transaction-form-container">
+    <h2>Add Transaction</h2>
+    <form method="post" class="transaction-form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-row">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="error-message">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Add Transaction</button>
+            <a href="{% url 'budzetApp:transaction_list' %}" class="btn-cancel">Cancel</a>
+        </div>
+    </form>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
+            {{ message }}</li>
+            {% endfor %}
+    </ul>
+    {% endif %}
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const budgetSelect = document.getElementById('id_budget');
         const categorySelect = document.getElementById('id_category');
 
@@ -32,14 +42,14 @@
         categorySelect.disabled = true;
 
         if (budgetSelect) {
-            budgetSelect.addEventListener('change', function() {
+            budgetSelect.addEventListener('change', function () {
                 const budgetId = this.value;
                 if (budgetId) {
                     categorySelect.disabled = false;
                     fetchCategories(budgetId);
                 } else {
                     categorySelect.disabled = true;
-                    categorySelect.innerHTML = '<option value="">Wybierz kategorię</option>';
+                    categorySelect.innerHTML = '<option value="">Select category</option>';
                 }
             });
 
@@ -52,7 +62,7 @@
 
         function fetchCategories(budgetId) {
             if (!budgetId) {
-                categorySelect.innerHTML = '<option value="">Wybierz kategorię</option>';
+                categorySelect.innerHTML = '<option value="">Select category</option>';
                 categorySelect.disabled = true;
                 return;
             }
@@ -60,8 +70,8 @@
             fetch("{% url 'budzetApp:get_budget_categories' %}?budget_id=" + budgetId)
                 .then(response => response.json())
                 .then(data => {
-                    categorySelect.innerHTML = '<option value="">Wybierz kategorię</option>';
-                    data.categories.forEach(function(category) {
+                    categorySelect.innerHTML = '<option value="">Select category</option>';
+                    data.categories.forEach(function (category) {
                         const option = document.createElement('option');
                         option.value = category.id;
                         option.textContent = category.name;
@@ -71,4 +81,4 @@
         }
     });
 </script>
-    {% endblock %}
+{% endblock %}

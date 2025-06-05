@@ -1,58 +1,154 @@
-
-.transaction-form {
-    max-width: 600px;
+/* Styl dla formularza dodawania transakcji - ciemny motyw z fioletowymi akcentami */
+.transaction-form-container {
+    max-width: 700px;
     margin: 2rem auto;
     padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    color: black;
+    background-color: #1E1E1E;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
+    .transaction-form-container h2 {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: #ffffff;
+        font-size: 1.8rem;
+        border-bottom: 2px solid #8A2BE2;
+        padding-bottom: 10px;
     }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
+.transaction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+    .form-row label {
+        font-weight: 600;
+        color: #cccccc;
+    }
+
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
+        border: 1px solid #333333;
+        border-radius: 6px;
         font-size: 1rem;
+        background-color: #252525;
+        color: #ffffff;
+        transition: all 0.3s ease;
     }
+
+        .form-row input:focus,
+        .form-row select:focus,
+        .form-row textarea:focus {
+            outline: none;
+            border-color: #8A2BE2;
+            box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+        }
 
 .form-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 15px;
     margin-top: 1.5rem;
 }
 
-.btn-save {
-    background-color: #4CAF50;
+.btn-submit {
+    background-color: #8A2BE2;
     color: white;
     padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
-.btn-cancel, .btn-delete {
-    background-color: #f44336;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
+    .btn-submit:hover {
+        background-color: #6A1B9A;
+        transform: translateY(-2px);
+    }
 
 .btn-cancel {
-    background-color: #6c757d;
+    background-color: #333333;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+    .btn-cancel:hover {
+        background-color: #444444;
+        transform: translateY(-2px);
+    }
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+    .messages li {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+        border-radius: 4px;
+        font-weight: 600;
+    }
+
+        .messages li.success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .messages li.error {
+            background-color: #f44336;
+            color: white;
+        }
+
+.back-link {
+    display: inline-block;
+    margin-top: 1.5rem;
+    color: #8A2BE2;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: #252525;
+}
+
+    .back-link:hover {
+        color: #6A1B9A;
+        text-decoration: none;
+        background-color: #2d2d2d;
+    }
+
+/* Responsywnoœæ */
+@media (max-width: 768px) {
+    .transaction-form-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-submit, .btn-cancel {
+        width: 100%;
+    }
 }
