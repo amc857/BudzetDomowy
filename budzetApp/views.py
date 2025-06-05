@@ -151,7 +151,7 @@ def add_transaction(request):
             transaction = form.save(commit=False)
             transaction.user = user
             transaction.save()
-            return redirect('budzetApp:transaction_list')
+            return redirect('budzetApp:budget_list')
     else:
         form = TransakcjeForm(budgets_qs=budgets_qs)
     return render(request, 'budzetApp/addtransaction.html', {'form': form})

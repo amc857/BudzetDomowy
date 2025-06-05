@@ -1,12 +1,7 @@
-{% extends "budzetApp/temp.html" %}
 {% load static %}
 
-{% block title %}
-    Login Page
-{% endblock title %}
-
 {% block styles %}
-    <link rel="stylesheet" href="{% static 'css/login_style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/register_login.css' %}">
 {% endblock styles %}
 
 {% block main %}
@@ -14,9 +9,9 @@
 
     <div class="main">
 
-        <h1>Welcome to the Login Page</h1>
+        <h1>Welcome to the Login Page!</h1>
 
-        <form class="login-form" method="post" action="{% url 'budzetApp:login' %}">
+        <form class="register_login-form" method="post" action="{% url 'budzetApp:login' %}">
             {% csrf_token %}
             <div class="form-group">
                 <label for="username">Username</label>
@@ -29,10 +24,10 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit">Go to Index</button>
+                <button type="submit">Sign In</button>
             </div>
             <div class="form-actions">
-                <a href="{% url 'budzetApp:register' %}" class="btn btn-secondary">Register</a>
+                <a href="{% url 'budzetApp:register' %}" class="button">Register</a>
             </div>
 
         </form>

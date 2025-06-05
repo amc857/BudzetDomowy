@@ -19,8 +19,8 @@ class TransakcjeForm(forms.ModelForm):
 
 
 class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput, label="Hasło")
-    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Potwierdź hasło")
+    password = forms.CharField(widget=forms.PasswordInput, label="Password")
+    confirm_password = forms.CharField(widget=forms.PasswordInput, label="Confirm Password")
 
     class Meta:
         #model = User
