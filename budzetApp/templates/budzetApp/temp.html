@@ -61,15 +61,42 @@
    <!-- Menu boczne -->
    <div class="side-menu" id="sideMenu">
     {% block side_menu %}
-    
+       <ul>
+           <li>
+               <a href="{% url 'budzetApp:index' %}" class="menu-item">
+                   <i class="icon-summary"></i>
+                   Main panel
+               </a>
+           </li>
+           <li>
+               <a href="{% url 'budzetApp:create_budget' %}" class="menu-item">
+                   <i class="icon-budgets"></i>
+                   Create Budgets
+               </a>
+           </li>
+           <li>
+               <a href="{% url 'budzetApp:budget_list' %}" class="menu-item">
+                   <i class="icon-budgets"></i>
+                   Show Budgets
+               </a>
+           </li>
+           <li>
+               <a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">
+                   <i class="icon-transactions"></i>
+                   Transactions
+               </a>
+           </li>
+
+       </ul>
     {% endblock side_menu %}
 
 </div>
 
         <!-- Główne pole -->
-        <div class="main">
-            {% block main %}
-            {% endblock main %}
-        </div>
+       <div class="main">
+           
+           {% block main %}
+           {% endblock main %}
+       </div>
     </body>
     </html>

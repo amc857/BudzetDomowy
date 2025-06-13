@@ -52,6 +52,7 @@
     <Content Include="budzetApp\static\css\addtransaction.css" />
     <Content Include="budzetApp\static\css\budget.css" />
     <Content Include="budzetApp\static\css\index.css" />
+    <Content Include="budzetApp\static\css\index_buttons.css" />
     <Content Include="budzetApp\static\css\login_style.css" />
     <Content Include="budzetApp\static\css\style.css" />
     <Content Include="budzetApp\static\css\transaction.css" />

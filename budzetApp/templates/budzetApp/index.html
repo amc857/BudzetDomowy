@@ -2,304 +2,122 @@
 {% load static %}
 
 {% block title %}
-    Summary
+    Strona główna
 {% endblock title %}
 
 {% block header %}
-<h1>Summary</h1>
+<div id="budget-header" style="display: flex; align-items: center; gap: 1rem;">
+    <span id="budget-title" style="font-weight: bold; font-size: 1.2rem; cursor:pointer;">
+        <span id="current-budget-name">
+            {% if selected_budget %}
+                {{ selected_budget.name }}
+            {% else %}
+                Panel główny
+            {% endif %}
+        </span>
+    </span>
+</div>
+
+<!-- Popup z wyborem budżetu -->
+<div id="budget-popup" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); background:#fff; border-radius:8px; box-shadow:0 2px 10px #0002; padding:20px; z-index:1000;">
+    {% if budgets %}
+    <h3>Wybierz budżet</h3>
+    <ul style="list-style:none; padding:0;">
+        <li>Twoje budżety:</li>
+        {% for budget in budgets %}
+        <li>
+            <a href="?budget={{ budget.id }}" class="budget-select" data-index="{{ forloop.counter0 }}">{{ budget.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <h3>Brak dostępnych budżetów.</h3>
+    {% endif %}
+</div>
 {% endblock header %}
 
 
 {% block styles %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
-<style>
-    .action-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 20px;
-        margin-top: 1rem;
-    }
+<link rel="stylesheet" href="{% static 'css/index_buttons.css' %}">
 
-    .action-card {
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
-        cursor: pointer;
-        position: relative;
-    }
-
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .action-card.add-transaction {
-            background: linear-gradient(135deg, #4CAF50, #8BC34A);
-            color: white;
-        }
-
-        .action-card.create-budget {
-            background: linear-gradient(135deg, #2196F3, #03A9F4);
-            color: white;
-        }
-
-        .action-card.generate-report {
-            background: linear-gradient(135deg, #9C27B0, #673AB7);
-            color: white;
-        }
-
-        .action-card i {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        .action-card h3 {
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .action-card p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .action-card a {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            z-index: 1;
-        }
-
-    .recent-transactions {
-        margin-top: 2rem;
-    }
-
-        .recent-transactions h2 {
-            margin-bottom: 1rem;
-        }
-
-        .recent-transactions table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            margin-top: 1rem;
-            background-color: #fff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        }
-
-        .recent-transactions th {
-            background-color: #3f51b5;
-            color: white;
-            padding: 14px 15px;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 2px solid #2c3e50;
-        }
-
-        .recent-transactions td {
-            padding: 14px 15px;
-            border-bottom: 1px solid #e0e0e0;
-            vertical-align: middle;
-            color: #333;
-        }
-
-        .recent-transactions tr:nth-child(even) {
-            background-color: #f5f7ff;
-        }
-
-        .recent-transactions tr:last-child td {
-            border-bottom: none;
-        }
-
-        .recent-transactions tr:hover {
-            background-color: #eef2ff;
-        }
-
-    td.income {
-        color: #2ecc71;
-        font-weight: 600;
-    }
-
-    td.expense {
-        color: #e74c3c;
-        font-weight: 600;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 8px;
-        justify-content: center;
-    }
-
-    .btn-edit, .btn-delete {
-        padding: 6px 14px;
-        border-radius: 4px;
-        font-size: 0.85rem;
-        cursor: pointer;
-        text-decoration: none;
-        border: none;
-        font-family: inherit;
-        display: inline-flex;
-        align-items: center;
-        transition: all 0.2s ease;
-        font-weight: 500;
-    }
-
-    .btn-edit {
-        background-color: #3498db;
-        color: white;
-    }
-
-    .btn-delete {
-        background-color: #e74c3c;
-        color: white;
-    }
-
-    .btn-edit:hover {
-        background-color: #2980b9;
-        transform: translateY(-2px);
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn-delete:hover {
-        background-color: #c0392b;
-        transform: translateY(-2px);
-        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    .btn-edit:active, .btn-delete:active {
-        transform: translateY(1px);
-        box-shadow: none;
-    }
-
-    .summary-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-top: 1rem;
-    }
-
-    .summary-card {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        text-align: center;
-        color: #333;
-    }
-
-        .summary-card.income {
-            border-top: 4px solid #2ecc71;
-        }
-
-        .summary-card.expenses {
-            border-top: 4px solid #e74c3c;
-        }
-
-        .summary-card.balance {
-            border-top: 4px solid #3498db;
-        }
-
-        .summary-card h3 {
-            color: #333;
-            margin-bottom: 0.75rem;
-        }
-
-        .summary-card .amount {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .summary-card.income .amount {
-            color: #2ecc71;
-        }
-
-        .summary-card.expenses .amount {
-            color: #e74c3c;
-        }
-
-        .summary-card.balance .amount {
-            color: #3498db;
-        }
-
-        .summary-card small {
-            color: #777;
-            font-size: 0.85rem;
-        }
-
-    .pagination {
-        display: flex;
-        justify-content: center;
-        margin-top: 1.5rem;
-    }
-
-        .pagination a {
-            color: #3498db;
-            padding: 8px 12px;
-            text-decoration: none;
-            border-radius: 4px;
-            margin: 0 3px;
-            transition: background-color 0.2s;
-        }
-
-            .pagination a:hover {
-                background-color: #eef2ff;
-            }
-
-        .pagination .current {
-            background-color: #f5f7ff;
-            padding: 8px 12px;
-            border-radius: 4px;
-            margin: 0 3px;
-            color: #333;
-        }
-</style>
 {% endblock styles %}
+
+{% block scripts %}
+{{ block.super }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const budgets = [{% for budget in budgets %}"{{ budget.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
+        let currentIndex = {% if budgets or length > 0 %}0{% else %} -1{% endif %};
+
+        const currentBudgetName = document.getElementById('current-budget-name');
+        const budgetTitle = document.getElementById('budget-title');
+        const popup = document.getElementById('budget-popup');
+        const budgetLinks = document.querySelectorAll('.budget-select');
+
+        function updateBudgetName() {
+            if (currentIndex >= 0 && budgets.length > 0) {
+                currentBudgetName.textContent = budgets[currentIndex];
+            }
+        }
+
+        budgetTitle.onclick = function() {
+            popup.style.display = 'block';
+        };
+        budgetLinks.forEach(function(link) {
+            link.onclick = function(e) {
+                
+                popup.style.display = 'none';
+            };
+        });
+        // Zamknięcie popupu po kliknięciu poza nim
+        document.addEventListener('mousedown', function (event) {
+            if (popup.style.display === 'block' && !popup.contains(event.target) && event.target.id !== 'budget-title') {
+                popup.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock scripts %}
 
 {% block main %}
 
 <div class="summary-section">
-    <h2>Monthly Overview</h2>
+    {% if selected_budget %}
+    <h2>Budżet: {{ selected_budget.name }}</h2>
     <div class="summary-cards">
         <div class="summary-card income">
-            <h3>Total Income</h3>
-            <p class="amount">${{ total_income|default:"0" }}</p>
-            <small>This month</small>
+            <h3>Przychody</h3>
+            <p class="amount">{{ total_income }}</p>
         </div>
         <div class="summary-card expenses">
-            <h3>Total Expenses</h3>
-            <p class="amount">${{ total_expenses|default:"0" }}</p>
-            <small>This month</small>
+            <h3>Wydatki</h3>
+            <p class="amount">{{ total_expenses }}</p>
         </div>
         <div class="summary-card balance">
-            <h3>Current Balance</h3>
-            <p class="amount">${{ total_income|add:total_expenses|default:"0" }}</p>
-            <small>Net savings</small>
+            <h3>Bilans</h3>
+            <p class="amount">{{ total_income|add:total_expenses }}</p>
         </div>
     </div>
+    {% else %}
+    <p>Brak budżetów</p>
+    {% endif %}
 </div>
-
 
 <div class="dashboard-container">
     <div class="quick-actions">
         <h2>Quick Actions</h2>
         <div class="action-grid">
+            {% if selected_budget %}
             <div class="action-card add-transaction">
                 <i class="icon-add-transaction">➕</i>
                 <h3>Add Transaction</h3>
                 <p>Record a new expense or income</p>
                 <a href="{% url 'budzetApp:addtransaction' %}" aria-label="Add transaction"></a>
             </div>
+            {% endif %}
             <div class="action-card create-budget">
                 <i class="icon-create-budget">💰</i>
                 <h3>Create Budget</h3>
@@ -310,7 +128,7 @@
         </div>
     </div>
 
-
+    {% if selected_budget %}
     <div class="recent-transactions">
         <h2>Recent Transactions</h2>
         <table>
@@ -334,11 +152,7 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            <a href="{% url 'budzetApp:edit_transaction' transaction.pk %}" class="btn-edit">Edit</a>
-                            <form style="display:inline;" method="POST" action="{% url 'budzetApp:delete_transaction' transaction.pk %}" onsubmit="return confirm('Are you sure you want to delete this transaction?')">
-                                {% csrf_token %}
-                                <button type="submit" class="btn-delete">Delete</button>
-                            </form>
+                            
                         </div>
                     </td>
                 </tr>
@@ -368,36 +182,12 @@
         </div>
         {% endif %}
     </div>
+    {% endif %}
 </div>
+
 {% endblock main %}
 
 
 {% block side_menu %}
-<ul>
-    <li>
-        <a href="{% url 'budzetApp:index' %}" class="menu-item">
-            <i class="icon-summary"></i>
-            Summary
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'budzetApp:create_budget' %}" class="menu-item">
-            <i class="icon-budgets"></i>
-            Create Budgets
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'budzetApp:budget_list' %}" class="menu-item">
-            <i class="icon-budgets"></i>
-            Show Budgets
-        </a>
-    </li>
-    <li>
-        <a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">
-            <i class="icon-transactions"></i>
-            Transactions
-        </a>
-    </li>
-
-</ul>
+{{ block.super }}
 {% endblock side_menu %}

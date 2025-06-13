@@ -1,9 +1,8 @@
 from typing import Any
 from django import forms
-from .models import Budget, Kategorie, Transaction, User
 from django.core.exceptions import ValidationError
 
-from .models import Budzety, Transakcje, Uzytkownicy
+from .models import Budzety, Transakcje, Uzytkownicy, Kategorie
 
 
 class TransakcjeForm(forms.ModelForm):
@@ -25,7 +24,13 @@ class UserRegistrationForm(forms.ModelForm):
     class Meta:
         #model = User
         model = Uzytkownicy
-        fields = ['username', 'password']
+        fields = ['username','email', 'password']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if Uzytkownicy.objects.filter(email=email).exists():
+            raise ValidationError("Podany adres e-mail jest już zajęty.")
+        return email
 
     def clean(self):
         cleaned_data = super().clean()
