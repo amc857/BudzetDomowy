@@ -6,33 +6,9 @@
 {% endblock title %}
 
 {% block header %}
-<div id="budget-header" style="display: flex; align-items: center; gap: 1rem;">
-    <span id="budget-title" style="font-weight: bold; font-size: 1.2rem; cursor:pointer;">
-        <span id="current-budget-name">
-            {% if selected_budget %}
-                {{ selected_budget.name }}
-            {% else %}
-                Panel główny
-            {% endif %}
-        </span>
-    </span>
-</div>
-
-<!-- Popup z wyborem budżetu -->
-<div id="budget-popup" style="display:none; position:fixed; top:20%; left:50%; transform:translateX(-50%); background:#fff; border-radius:8px; box-shadow:0 2px 10px #0002; padding:20px; z-index:1000;">
-    {% if budgets %}
-    <h3>Wybierz budżet</h3>
-    <ul style="list-style:none; padding:0;">
-        <li>Twoje budżety:</li>
-        {% for budget in budgets %}
-        <li>
-            <a href="?budget={{ budget.id }}" class="budget-select" data-index="{{ forloop.counter0 }}">{{ budget.name }}</a>
-        </li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <h3>Brak dostępnych budżetów.</h3>
-    {% endif %}
+<div id="app-header" style="display: flex; align-items: center; gap: 1rem;">
+    {# Tutaj możesz zostawić inne ogólne elementy nagłówka aplikacji, np. logo, nazwa aplikacji #}
+    {# Nazwa budżetu i selektor zostaną przeniesione do main #}
 </div>
 {% endblock header %}
 
@@ -41,52 +17,88 @@
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 <link rel="stylesheet" href="{% static 'css/index_buttons.css' %}">
-
 {% endblock styles %}
 
 {% block scripts %}
 {{ block.super }}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const budgets = [{% for budget in budgets %}"{{ budget.name }}"{% if not forloop.last %}, {% endif %}{% endfor %}];
-        let currentIndex = {% if budgets or length > 0 %}0{% else %} -1{% endif %};
-
-        const currentBudgetName = document.getElementById('current-budget-name');
-        const budgetTitle = document.getElementById('budget-title');
-        const popup = document.getElementById('budget-popup');
+    document.addEventListener('DOMContentLoaded', function () {
+        // Zmienione odwołania, bo elementy są teraz w bloku main
+        const budgetToggleBtn = document.getElementById('budget-toggle-btn-main'); // Nowy ID dla przycisku w main
+        const budgetDropdown = document.getElementById('budget-dropdown-main');   // Nowy ID dla dropdownu w main
         const budgetLinks = document.querySelectorAll('.budget-select');
+        const budgetDisplayContainer = document.getElementById('budget-display-container-main'); // Nowy ID dla kontenera w main
 
-        function updateBudgetName() {
-            if (currentIndex >= 0 && budgets.length > 0) {
-                currentBudgetName.textContent = budgets[currentIndex];
-            }
+        if (budgetToggleBtn && budgetDropdown && budgetDisplayContainer) {
+            // Toggle visibility of the budget dropdown
+            budgetToggleBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                budgetDropdown.classList.toggle('show');
+            });
+
+            // Close dropdown when a budget link is clicked
+            budgetLinks.forEach(function (link) {
+                link.addEventListener('click', function (e) {
+                    budgetDropdown.classList.remove('show');
+                });
+            });
+
+            // Close dropdown when clicking outside of it
+            document.addEventListener('click', function (event) {
+                if (!budgetDropdown.contains(event.target) && !budgetDisplayContainer.contains(event.target)) {
+                    budgetDropdown.classList.remove('show');
+                }
+            });
+
+            // Close dropdown on Escape key
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape' && budgetDropdown.classList.contains('show')) {
+                    budgetDropdown.classList.remove('show');
+                }
+            });
+        } else {
+            console.warn("One or more budget-related elements not found in the DOM (expected in 'main' block).");
         }
-
-        budgetTitle.onclick = function() {
-            popup.style.display = 'block';
-        };
-        budgetLinks.forEach(function(link) {
-            link.onclick = function(e) {
-                
-                popup.style.display = 'none';
-            };
-        });
-        // Zamknięcie popupu po kliknięciu poza nim
-        document.addEventListener('mousedown', function (event) {
-            if (popup.style.display === 'block' && !popup.contains(event.target) && event.target.id !== 'budget-title') {
-                popup.style.display = 'none';
-            }
-        });
     });
 </script>
 {% endblock scripts %}
 
 {% block main %}
-
 <div class="summary-section">
-    {% if selected_budget %}
-    <h2>Budżet: {{ selected_budget.name }}</h2>
+    {# Przeniesiony kontener wyboru budżetu do sekcji głównej #}
+    <div id="budget-selector-section" style="margin-bottom: 20px; position: relative;"> {# position: relative dla dropdownu #}
+        <div id="budget-display-container-main" style="display: flex; align-items: center; gap: 0.5rem;">
+            <h2 style="margin: 0;">Budżet: 
+                <span id="current-budget-name-main" style="font-weight: bold; cursor: default;">{# Usunięto cursor:pointer z nazwy #}
+                    {% if selected_budget %}
+                        {{ selected_budget.name }}
+                    {% else %}
+                        Panel główny
+                    {% endif %}
+                </span>
+            </h2>
+            <button id="budget-toggle-btn-main" style="background: none; border: none; cursor: pointer; color: inherit; font-size: 1.2rem; padding: 0; margin-left: 5px;">
+                ▼
+            </button>
+        </div>
+
+        <div id="budget-dropdown-main" class="budget-dropdown-content">
+            {% if budgets %}
+            <h3>Wybierz budżet</h3>
+            <ul style="list-style:none; padding:0; margin:0;">
+                {% for budget in budgets %}
+                <li>
+                    <a href="?budget={{ budget.id }}" class="budget-select">{{ budget.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>Brak dostępnych budżetów.</p>
+            {% endif %}
+        </div>
+    </div>
+
     <div class="summary-cards">
         <div class="summary-card income">
             <h3>Przychody</h3>
@@ -101,8 +113,8 @@
             <p class="amount">{{ total_income|add:total_expenses }}</p>
         </div>
     </div>
-    {% else %}
-    <p>Brak budżetów</p>
+    {% if not selected_budget %}
+    <p>Wybierz budżet, aby zobaczyć szczegóły.</p>
     {% endif %}
 </div>
 
@@ -152,7 +164,7 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            
+                            {# Tutaj możesz dodać przyciski edycji/usuwania transakcji #}
                         </div>
                     </td>
                 </tr>

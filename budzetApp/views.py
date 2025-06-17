@@ -96,7 +96,7 @@ def login(request):
             # Użytkownik nie istnieje
             messages.error(request, "Nie znaleziono użytkownika o podanych danych.")
             return redirect('budzetApp:login')
-        
+            
     return render(request, 'budzetApp/login.html')
 
 # Strona rejestracji użytkownika

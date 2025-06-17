@@ -1,8 +1,16 @@
 ﻿{% extends "budzetApp/temp.html" %}
 {% load static %}
 
+{% block title %}
+Add Transaction
+{% endblock title %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/addtransaction.css' %}">
+{% endblock styles %}
+
 {% block main %}
-<link rel="stylesheet" href="{% static 'css/addtransaction.css' %}">
 <div class="transaction-form-container">
     <h2>Add Transaction</h2>
     <form method="post" class="transaction-form">
@@ -33,6 +41,7 @@
 {% endblock %}
 
 {% block scripts %}
+ {{ block.super }}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const budgetSelect = document.getElementById('id_budget');
