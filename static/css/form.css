@@ -1,0 +1,226 @@
+/* Unified CSS for forms - dark theme with purple accents based on addtransaction.css and budget.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    overflow-x: hidden;
+}
+
+.form-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    width: 90%; /* Domyślna elastyczność dla mniejszych ekranów */
+    box-sizing: border-box; /* Uwzględnia padding w szerokości */
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: #ffffff;
+    border-bottom: 2px solid #8a2be2;
+    padding-bottom: 10px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #cccccc;
+    font-size: 1rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #333333;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #252525;
+    color: #ffffff;
+    transition: all 0.3s ease;
+    box-sizing: border-box; /* Uwzględnia padding w szerokości */
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #8a2be2;
+    box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.2);
+}
+
+.form-group select:disabled {
+    background-color: #333333;
+    color: #888888;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 1.5rem;
+    flex-wrap: wrap; /* Pozwala na zawijanie elementów */
+}
+
+.btn-submit,
+.btn-cancel,
+.back-link {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    white-space: normal; /* Pozwala na zawijanie tekstu */
+    overflow: hidden; /* Zapobiega przepełnieniu */
+    text-overflow: ellipsis; /* Skraca tekst z wielokropkiem */
+    max-width: 100%; /* Ogranicza maksymalną szerokość */
+    box-sizing: border-box; /* Uwzględnia padding w szerokości */
+}
+
+.btn-submit {
+    background-color: #8a2be2;
+    color: #ffffff;
+}
+
+.btn-submit:hover {
+    background-color: #6a1b9a;
+    transform: translateY(-2px);
+}
+
+.btn-cancel,
+.back-link {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.btn-cancel:hover,
+.back-link:hover {
+    background-color: #444444;
+    transform: translateY(-2px);
+}
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+}
+
+.messages li {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.messages li.success {
+    background-color: #4caf50;
+    color: #ffffff;
+}
+
+.messages li.error {
+    background-color: #f44336;
+    color: #ffffff;
+}
+
+.error-message {
+    color: #f44336;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.budget-users-section {
+    margin-top: 2rem;
+    background-color: #252525;
+    padding: 1rem;
+    border-radius: 6px;
+}
+
+.budget-users-section h3 {
+    color: #cccccc;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.budget-users-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.budget-users-list li {
+    padding: 0.5rem;
+    border-bottom: 1px solid #333333;
+}
+
+.budget-users-list li:last-child {
+    border-bottom: none;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .form-container {
+        width: 85%; /* Zmniejszona szerokość dla mniejszych ekranów */
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .btn-submit,
+    .btn-cancel,
+    .back-link {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-container {
+        width: 90%;
+        padding: 1rem;
+    }
+
+    .form-container h2 {
+        font-size: 1.5rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 0.9rem;
+        padding: 0.6rem;
+    }
+
+    .btn-submit,
+    .btn-cancel,
+    .back-link {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+    }
+}

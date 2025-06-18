@@ -257,16 +257,23 @@ def get_budget_categories(request):
 # Strona akceptacji zaproszenia do budżetu
 def accept_invitation(request):
     token = request.GET.get('token')
-    invitation = get_object_or_404(BudgetInvitation, token=token, accepted=False)
-    user = invitation.invited_user
-    budget = invitation.budget
-
-    # Dodaj użytkownika do budżetu
-    budget.users.add(user)
-    invitation.accepted = True
-    invitation.save()
-    messages.success(request, f"You joined the budget {budget.name}.")
-    return redirect('budzetApp:budget_list')
+    invitation = None
+    success = False
+    budget = None
+    if token:
+        try:
+            invitation = BudgetInvitation.objects.get(token=token, accepted=False)
+            user = invitation.invited_user
+            budget = invitation.budget
+            # Dodaj użytkownika do budżetu, jeśli nie jest już dodany
+            if not budget.users.filter(pk=user.pk).exists():
+                budget.users.add(user)
+            invitation.accepted = True
+            invitation.save()
+            success = True
+        except BudgetInvitation.DoesNotExist:
+            success = False
+    return render(request, 'budzetApp/accept_invitation.html', {'success': success, 'budget': budget})
 
 #----------------------------------------------------------------------
 
