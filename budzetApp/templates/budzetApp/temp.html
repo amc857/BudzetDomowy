@@ -42,8 +42,11 @@
         <ul>
             <li><a href="{% url 'budzetApp:index' %}" class="menu-item">📊 Main panel</a></li>
             <li><a href="{% url 'budzetApp:create_budget' %}" class="menu-item">💰 Create Budgets</a></li>
-            <li><a href="{% url 'budzetApp:budget_list' %}" class="menu-item">💰 Show Budgets</a></li>
+            <li><a href="{% url 'budzetApp:budget_list' %}" class="menu-item">🧾 Show Budgets</a></li>
             <li><a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">💳 Transactions</a></li>
+            <li><a href="{% url 'budzetApp:create_category' %}" class="menu-item">📋 Create Category</a></li>
+            <li><a href="{% url 'budzetApp:add_user_to_budget' %}" class="menu-item">👥 Add User to Budget</a></li>
+            <li><a href="{% url 'budzetApp:accept_invitation' %}" class="menu-item">✉️ Accept Invitation</a></li>
         </ul>
         {% endblock side_menu %}
     </div>
@@ -83,7 +86,7 @@
             if (sideMenu.classList.contains('active') &&
                 !sideMenu.contains(event.target) &&
                 !menuToggle.contains(event.target)) {
-                
+
                 sideMenu.classList.remove('active');
             }
         });
