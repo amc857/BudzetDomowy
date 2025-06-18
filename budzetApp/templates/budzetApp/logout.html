@@ -4,66 +4,16 @@
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Logging out</title>
-   <style>
-      body {
-         margin: 0;
-         padding: 0;
-         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-         background-color: #121212;
-         color: #e0e0e0;
-         overflow-x: hidden;
-      }
-
-      .logout-container {
-         max-width: 450px;
-         margin: 50px auto;
-         padding: 40px;
-         background-color: #1e1e1e;
-         border-radius: 12px;
-         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-         border: 1px solid #333333;
-         text-align: center;
-      }
-
-      h2 {
-         color: #e0e0e0;
-         font-size: 24px;
-         margin-bottom: 10px;
-         font-weight: 600;
-      }
-
-      p {
-         color: #b0b0b0;
-         font-size: 16px;
-         margin-bottom: 20px;
-      }
-
-      a {
-         display: inline-block;
-         padding: 12px 24px;
-         background-color: #6200ea;
-         color: #ffffff;
-         text-decoration: none;
-         border: none;
-         border-radius: 6px;
-         font-size: 16px;
-         font-weight: 600;
-         cursor: pointer;
-         transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-      }
-
-      a:hover {
-         background-color: #7c4dff;
-         transform: translateY(-2px);
-         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-   </style>
+   <link rel="stylesheet" href="{% static 'css/form.css' %}">
 </head>
 <body>
    <div class="logout-container">
       <h2>You were logged out.</h2>
       <p>Successfully logged out.</p>
-      <a href="{% url 'budzetApp:login' %}">Login again</a>
+      <div class="form-actions">
+         <a href="{% url 'budzetApp:login' %}" class="back-link">Login again</a>
+      </div>
    </div>
 </body>
 </html>
+

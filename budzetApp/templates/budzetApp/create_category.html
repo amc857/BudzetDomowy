@@ -1,23 +1,36 @@
 {% extends "budzetApp/temp.html" %}
 {% load static %}
 
-{% block main %}
+{% block styles %}
+{{ block.super }}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
-<h2>Dodaj kategorię</h2>
-<form method="post">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <button type="submit">Dodaj</button>
-</form>
-{% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>
-        {{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-<a href="{% url 'budzetApp:budget_list' %}">Back to budget list</a>
+{% endblock styles %}
+
+{% block main %}
+<div class="form-container">
+    <h2>Add category</h2>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="error-message">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Add</button>
+            <a href="{% url 'budzetApp:budget_list' %}" class="back-link">Back to the budget list</a>
+        </div>
+    </form>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</div>
 {% endblock %}

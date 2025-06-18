@@ -1,20 +1,30 @@
 {% extends "budzetApp/temp.html" %}
+{% load static %}
+
+{% block styles %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock styles %}
+
 {% block main %}
-<h2>Add user to Budget</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Dodaj</button>
-</form>
-
-<div id="budget-users-section" style="display:none;">
-    <h3>Users already listed to budget: <span id="budget-name"></span></h3>
-    <ul id="budget-users-list">
-        <li>No users in this budget.</li>
-    </ul>
-</div>
-
-<a href="{% url 'budzetApp:budget_list' %}">Back to budget list</a>
+<div class="form-container">
+    <h2>Add user to budget</h2>
+    <form method="post" class="form">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <div class="error-message">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="form-actions">
+            <button type="submit" class="btn-submit">Add</button>
+            <a href="{% url 'budzetApp:budget_list' %}" class="back-link">Back to the budget list</a>
+        </div>
+    </form>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -59,4 +69,4 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-{% endblock %}
+{% endblock main%}

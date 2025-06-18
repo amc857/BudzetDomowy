@@ -3,13 +3,13 @@
 
 {% block styles %}
 {{ block.super }}
-<link rel="stylesheet" href="{% static 'css/register_login.css' %}">
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
 {% endblock styles %}
 
 {% block main %}
-<div class="main">
+<div class="form-container">
   <h2>Edit Profile</h2>
-  <div style="margin-bottom: 18px;">
+  <div class="user-info">
     <p><strong>Login:</strong> {{ current_user.username }}</p>
     <p><strong>E-mail:</strong> {{ current_user.email }}</p>
   </div>
@@ -20,7 +20,7 @@
       {% endfor %}
     </ul>
   {% endif %}
-  <form method="post" class="register_login-form">
+  <form method="post" class="form">
     {% csrf_token %}
     <div class="form-group">
       <label for="username">Username</label>
@@ -39,11 +39,9 @@
       <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password">
     </div>
     <div class="form-actions">
-      <button type="submit">Save Changes</button>
-    </div>
-    <div class="form-actions">
-      <a href="{% url 'budzetApp:index' %}" class="button">Back</a>
-    </div>
+            <button type="submit" class="btn-submit">Save changes</button>
+            <a href="{% url 'budzetApp:index' %}" class="back-link">Back</a>
+        </div>
   </form>
 </div>
 {% endblock %}

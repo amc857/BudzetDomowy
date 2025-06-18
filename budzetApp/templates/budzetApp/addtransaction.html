@@ -7,16 +7,16 @@ Add Transaction
 
 {% block styles %}
     {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/addtransaction.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
 {% endblock styles %}
 
 {% block main %}
-<div class="transaction-form-container">
+<div class="form-container wide">
     <h2>Add Transaction</h2>
-    <form method="post" class="transaction-form">
+    <form method="post" class="form">
         {% csrf_token %}
         {% for field in form %}
-        <div class="form-row">
+        <div class="form-group">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% if field.errors %}
