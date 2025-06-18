@@ -140,7 +140,7 @@ def edit_profile(request):
 def create_budget(request):
     user_id = request.session.get('user_id')
     if not user_id:
-        messages.error(request, "Musisz być zalogowany, aby utworzyć budżet.")
+        messages.error(request, "You need to be logged to create budget.")
         return redirect('budzetApp:login')
 
     user = Uzytkownicy.objects.get(pk=user_id)
@@ -219,14 +219,14 @@ def add_user_to_budget(request):
                 f"/accept_invitation/?token={token}"
             )
             send_mail(
-                subject="Zaproszenie do budżetu",
-                message=f"Otrzymałeś zaproszenie do budżetu '{selected_budget.name}'. Kliknij, aby dołączyć: {invite_link}",
+                subject="Invitation to budget",
+                message=f"You were invited to budget '{selected_budget.name}'. Click to join: {invite_link}",
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[selected_user.email],
                 fail_silently=True,
             )
 
-            messages.success(request, f"Zaproszenie zostało wysłane do {selected_user.username} ({selected_user.email}).")
+            messages.success(request, f"Invitation was sent to {selected_user.username} ({selected_user.email}).")
             return redirect('budzetApp:add_user_to_budget')
     else:
         form = AddUserToBudgetForm(budgets_qs=user_budgets)
@@ -265,7 +265,7 @@ def accept_invitation(request):
     budget.users.add(user)
     invitation.accepted = True
     invitation.save()
-    messages.success(request, f"Dołączyłeś do budżetu {budget.name}.")
+    messages.success(request, f"You joined the budget {budget.name}.")
     return redirect('budzetApp:budget_list')
 
 #----------------------------------------------------------------------
@@ -276,7 +276,7 @@ def accept_invitation(request):
 def add_transaction(request):
     user_id = request.session.get('user_id')
     if not user_id:
-        messages.error(request, "Musisz być zalogowany, aby dodać transakcję.")
+        messages.error(request, "You need to be logged, to add transaction.")
         return redirect('budzetApp:login')
 
     user = Uzytkownicy.objects.get(pk=user_id)
@@ -350,7 +350,7 @@ def add_user_to_budget(request):
             selected_user = form.cleaned_data['user']
             selected_budget = form.cleaned_data['budget']
             selected_budget.users.add(selected_user)
-            messages.success(request, f"Użytkownik {selected_user.username} został dodany do budżetu {selected_budget.name}.")
+            messages.success(request, f"User {selected_user.username} was added to budget {selected_budget.name}.")
             return redirect('budzetApp:add_user_to_budget')  # Odśwież, by zobaczyć aktualną listę
     else:
         form = AddUserToBudgetForm(budgets_qs=user_budgets)

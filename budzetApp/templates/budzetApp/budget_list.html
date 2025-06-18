@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-Lista Budżetów
+Budget list
 {% endblock title %}
 
 {% block styles %}
@@ -11,17 +11,17 @@ Lista Budżetów
 {% endblock styles %}
 
 {% block main %}
-<h1>Twoje Budżety</h1>
+<h1>Your Budgets</h1>
 <div class="table-container">
     <table>
         <thead>
             <tr>
-                <th>Nazwa</th>
-                <th>Data</th>
-                <th>Kwota Budżetu</th>
-                <th>Suma Transakcji</th>
-                <th>Pozostało</th>
-                <th>Transakcje</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Budget Amount</th>
+                <th>Total transaction</th>
+                <th>Left</th>
+                <th>Transactions</th>
             </tr>
         </thead>
         <tbody>
@@ -41,7 +41,7 @@ Lista Budżetów
                 </td>
             </tr>
             {% empty %}
-            <tr><td colspan="6" class="empty-state">Brak budżetów do wyświetlenia.</td></tr>
+            <tr><td colspan="6" class="empty-state">No budgets to show.</td></tr>
             {% endfor %}
         </tbody>
     </table>

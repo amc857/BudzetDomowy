@@ -1,0 +1,166 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    overflow-x: hidden;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: #1f1f1f;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    overflow: visible;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu-icon {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    gap: 4px;
+}
+
+.menu-icon div {
+    width: 24px;
+    height: 3px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.side-menu {
+    width: 250px;
+    background-color: #1e1e1e;
+    position: fixed;
+    top: 0;
+    left: -250px;
+    height: 100vh;
+    transition: left 0.3s ease;
+    z-index: 999;
+    padding-top: 60px;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.3);
+}
+
+.side-menu.active {
+    left: 0;
+}
+
+.side-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.side-menu ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #e0e0e0;
+    padding: 16px 20px;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.side-menu ul li a:hover {
+    background-color: #2c2c2c;
+    color: #1e90ff;
+}
+
+.main-content {
+    padding: 80px 20px 40px 20px;
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - 80px);
+}
+
+.side-menu.active ~ .main-content {
+    margin-left: 250px;
+}
+
+#user-menu-container {
+    position: relative;
+    display: flex; /* Wyrównanie nazwy i przycisku w poziomie */
+    align-items: center;
+    gap: 8px; /* Odstęp między nazwą a strzałką */
+}
+
+.user-name {
+    color: #e0e0e0; /* Jasny kolor tekstu */
+    font-size: 1rem;
+    font-weight: 500;
+    pointer-events: none; /* Wyłącza klikalność nazwy */
+}
+
+#user-menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 12px;
+    color: #e0e0e0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+#user-menu-btn:hover {
+    background-color: #3a3a3a;
+    border-radius: 4px;
+}
+
+#user-menu-btn.active {
+    background-color: #3a3a3a;
+    border-radius: 4px;
+}
+
+#user-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #2c2c2c;
+    border: 1px solid #3a3a3a;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    min-width: 150px;
+    min-height: 60px;
+}
+
+#user-dropdown.show {
+    display: block;
+}
+
+#user-dropdown a {
+    display: block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: #e0e0e0;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+#user-dropdown a:hover {
+    background-color: #3a3a3a;
+}

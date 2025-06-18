@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Budżet domowy{% endblock title %}</title>
+    <title>{% block title %}Home Budget{% endblock title %}</title>
     {% block styles %}
     <link rel="stylesheet" href="{% static 'css/template.css' %}">
     {% endblock styles %}
@@ -29,8 +29,8 @@
                     <span>▼</span>
                 </button>
                 <div id="user-dropdown">
-                    <a href="{% url 'budzetApp:edit_profile' %}">Edytuj profil</a>
-                    <a href="{% url 'budzetApp:logout' %}">Wyloguj</a>
+                    <a href="{% url 'budzetApp:edit_profile' %}">Edit Profile</a>
+                    <a href="{% url 'budzetApp:logout' %}">Log out</a>
                 </div>
             </div>
         </div>

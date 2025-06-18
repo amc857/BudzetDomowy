@@ -1,33 +1,49 @@
 {% extends "budzetApp/temp.html" %}
 {% load static %}
 
+{% block styles %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/register_login.css' %}">
+{% endblock styles %}
+
 {% block main %}
-<h2>Edytuj profil</h2>
-
-<p><strong>Obecny login:</strong> {{ current_user.username }}</p>
-<p><strong>Obecny email:</strong> {{ current_user.email }}</p>
-
-<form method="post">
+<div class="main">
+  <h2>Edit Profile</h2>
+  <div style="margin-bottom: 18px;">
+    <p><strong>Login:</strong> {{ current_user.username }}</p>
+    <p><strong>E-mail:</strong> {{ current_user.email }}</p>
+  </div>
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  <form method="post" class="register_login-form">
     {% csrf_token %}
-    <table>
-        <tr>
-            <th>Nazwa użytkownika:</th>
-            <td><input type="text" name="username" value="{{ current_user.username }}" required></td>
-        </tr>
-        <tr>
-            <th>Email:</th>
-            <td><input type="email" name="email" value="{{ current_user.email }}" required></td>
-        </tr>
-        <tr>
-            <th>Nowe hasło:</th>
-            <td><input type="password" name="password"></td>
-        </tr>
-        <tr>
-            <th>Potwierdź hasło:</th>
-            <td><input type="password" name="confirm_password"></td>
-        </tr>
-    </table>
-    <button type="submit">Zapisz zmiany</button>
-</form>
-<a href="{% url 'budzetApp:index' %}">Powrót</a>
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" value="{{ current_user.username }}" required>
+    </div>
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" value="{{ current_user.email }}" required>
+    </div>
+    <div class="form-group">
+      <label for="password">New Password</label>
+      <input type="password" id="password" name="password" autocomplete="new-password">
+    </div>
+    <div class="form-group">
+      <label for="confirm_password">Confirm Password</label>
+      <input type="password" id="confirm_password" name="confirm_password" autocomplete="new-password">
+    </div>
+    <div class="form-actions">
+      <button type="submit">Save Changes</button>
+    </div>
+    <div class="form-actions">
+      <a href="{% url 'budzetApp:index' %}" class="button">Back</a>
+    </div>
+  </form>
+</div>
 {% endblock %}

@@ -1,14 +1,14 @@
 {% extends "budzetApp/temp.html" %}
 
 {% block title %}
-   Wylogowanie
+   Logging out
 {% endblock %}
 
 {% block side_menu %}
 {% endblock side_menu %}
 
 {% block main %}
-<h2>Zostałeś wylogowany</h2>
-<p>Pomyślnie wylogowano z aplikacji.</p>
-<a href="{% url 'budzetApp:login' %}">Zaloguj się ponownie</a>
+<h2>You were logged out.</h2>
+<p>Successfully logged out.</p>
+<a href="{% url 'budzetApp:login' %}">Login again</a>
 {% endblock %}

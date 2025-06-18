@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    Strona główna
+    Main Page
 {% endblock title %}
 
 {% block header %}
@@ -69,7 +69,7 @@
     {# Przeniesiony kontener wyboru budżetu do sekcji głównej #}
     <div id="budget-selector-section" style="margin-bottom: 20px; position: relative;"> {# position: relative dla dropdownu #}
         <div id="budget-display-container-main" style="display: flex; align-items: center; gap: 0.5rem;">
-            <h2 style="margin: 0;">Budżet: 
+            <h2 style="margin: 0;">Budget: 
                 <span id="current-budget-name-main" style="font-weight: bold; cursor: default;">{# Usunięto cursor:pointer z nazwy #}
                     {% if selected_budget %}
                         {{ selected_budget.name }}
@@ -85,7 +85,7 @@
 
         <div id="budget-dropdown-main" class="budget-dropdown-content">
             {% if budgets %}
-            <h3>Wybierz budżet</h3>
+            <h3>Choose Budget</h3>
             <ul style="list-style:none; padding:0; margin:0;">
                 {% for budget in budgets %}
                 <li>
@@ -94,27 +94,27 @@
                 {% endfor %}
             </ul>
             {% else %}
-            <p>Brak dostępnych budżetów.</p>
+            <p>No budgets available.</p>
             {% endif %}
         </div>
     </div>
 
     <div class="summary-cards">
         <div class="summary-card income">
-            <h3>Przychody</h3>
+            <h3>Income</h3>
             <p class="amount">{{ total_income }}</p>
         </div>
         <div class="summary-card expenses">
-            <h3>Wydatki</h3>
+            <h3>Expenses</h3>
             <p class="amount">{{ total_expenses }}</p>
         </div>
         <div class="summary-card balance">
-            <h3>Bilans</h3>
+            <h3>Balance</h3>
             <p class="amount">{{ total_income|add:total_expenses }}</p>
         </div>
     </div>
     {% if not selected_budget %}
-    <p>Wybierz budżet, aby zobaczyć szczegóły.</p>
+    <p>Choose budget to see details.</p>
     {% endif %}
 </div>
 

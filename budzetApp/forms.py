@@ -66,8 +66,8 @@ class KategorieCreateForm(forms.ModelForm):
         model = Kategorie
         fields = ['category_name', 'budget']
         labels = {
-            'category_name': 'Nazwa kategorii',
-            'budget': 'Budżet',
+            'category_name': 'Category Name',
+            'budget': 'Budget',
         }
 
     def __init__(self, *args, **kwargs):
@@ -78,8 +78,8 @@ class KategorieCreateForm(forms.ModelForm):
     
 
 class AddUserToBudgetForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=Uzytkownicy.objects.none(), label="Użytkownik")
-    budget = forms.ModelChoiceField(queryset=Budzety.objects.all(), label="Budżet")
+    user = forms.ModelChoiceField(queryset=Uzytkownicy.objects.none(), label="User")
+    budget = forms.ModelChoiceField(queryset=Budzety.objects.all(), label="Budget")
 
     def __init__(self, *args, **kwargs):
         budgets_qs = kwargs.pop('budgets_qs', None)

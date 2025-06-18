@@ -1,6 +1,6 @@
 {% extends "budzetApp/temp.html" %}
 {% block main %}
-<h2>Dodaj użytkownika do budżetu</h2>
+<h2>Add user to Budget</h2>
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
@@ -8,13 +8,13 @@
 </form>
 
 <div id="budget-users-section" style="display:none;">
-    <h3>Użytkownicy już przypisani do budżetu: <span id="budget-name"></span></h3>
+    <h3>Users already listed to budget: <span id="budget-name"></span></h3>
     <ul id="budget-users-list">
-        <li>Brak użytkowników w tym budżecie.</li>
+        <li>No users in this budget.</li>
     </ul>
 </div>
 
-<a href="{% url 'budzetApp:budget_list' %}">Powrót do listy budżetów</a>
+<a href="{% url 'budzetApp:budget_list' %}">Back to budget list</a>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
