@@ -2,13 +2,13 @@
 {% load static %}
 
 {% block main %}
-<link rel="stylesheet" href="{% static 'css/budget.css' %}">
-<div class="budget-form-container">
-    <h1>Create Budget</h1>
-    <form method="post" class="budget-form">
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+<div class="form-container">
+    <h2>Create Budget</h2>
+    <form method="post" class="form">
         {% csrf_token %}
         {% for field in form %}
-        <div class="form-field">
+        <div class="form-group">
             <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {{ field }}
             {% if field.errors %}
@@ -16,9 +16,6 @@
             {% endif %}
         </div>
         {% endfor %}
-
-
-
         <div class="form-actions">
             <button type="submit" class="btn-submit">Save Budget</button>
         </div>

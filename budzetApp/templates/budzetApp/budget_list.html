@@ -16,25 +16,29 @@ Budget list
     <table>
         <thead>
             <tr>
+                <th>Action</th>
                 <th>Name</th>
                 <th>Date</th>
                 <th>Budget Amount</th>
                 <th>Total transaction</th>
                 <th>Left</th>
                 <th>Transactions</th>
+                <th>Members</th>
             </tr>
         </thead>
         <tbody>
             {% for summary in budget_summaries %}
-           
+
             <tr>
                 <td>
-                    <a href="{% url 'budzetApp:index' %}?budget={{ summary.budget.id }}">
-                        {{ summary.budget.name }}
+                    <a class="action-btn" href="{% url 'budzetApp:index' %}?budget={{ summary.budget.id }}">
+                        Show
                     </a>
                 </td>
+                <td data-label="Name">{{ summary.budget.name }}</td>
                 <td>{{ summary.budget.date }}</td>
-                <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">{{ summary.budget.budget_amount }}</td>
+                <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">{{ summary.budget.budget_amount }}
+                </td>
                 <td>{{ summary.total_transactions }}</td>
                 <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">{{ summary.remaining }}</td>
                 <td>
@@ -44,9 +48,18 @@ Budget list
                         {% endfor %}
                     </ul>
                 </td>
+                <td data-label="Members">
+                    <ul>
+                        {% for user in summary.users%}
+                        <li>{{ user.username }}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
             </tr>
             {% empty %}
-            <tr><td colspan="6" class="empty-state">No budgets to show.</td></tr>
+            <tr>
+                <td colspan="6" class="empty-state">No budgets to show.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
