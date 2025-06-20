@@ -57,6 +57,13 @@ def index(request):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    users_in_budget = []
+    if selected_budget:
+        transactions = Transakcje.objects.filter(budget=selected_budget).order_by('-transaction_date')
+        total_income = transactions.filter(amount__gt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+        total_expenses = transactions.filter(amount__lt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+        users_in_budget = selected_budget.users.all()
+
     context = {
         'budgets': budgets,
         'selected_budget': selected_budget,
@@ -66,6 +73,7 @@ def index(request):
         'page_obj': page_obj,
         'total_income': total_income,
         'total_expenses': total_expenses,
+        'users_in_budget': users_in_budget,
     }
 
     return render(request, 'budzetApp/index.html', context)
@@ -173,11 +181,13 @@ def budget_list(request):
     for budget in budgets:
         transactions = Transakcje.objects.select_related('budget').filter(budget=budget.id)
         total_transactions = sum(bt.amount for bt in transactions)
+        users_in_budget = budget.users.all()
         budget_summaries.append({
             'budget': budget,
             'transactions': transactions,
             'total_transactions': total_transactions,
-            'remaining': budget.budget_amount - total_transactions
+            'remaining': budget.budget_amount - total_transactions,
+            'users': users_in_budget,
         })
 
     return render(request, 'budzetApp/budget_list.html', {'budget_summaries': budget_summaries})

@@ -26,17 +26,22 @@ Budget list
         </thead>
         <tbody>
             {% for summary in budget_summaries %}
+           
             <tr>
-                <td>{{ summary.budget.name }}</td>
+                <td>
+                    <a href="{% url 'budzetApp:index' %}?budget={{ summary.budget.id }}">
+                        {{ summary.budget.name }}
+                    </a>
+                </td>
                 <td>{{ summary.budget.date }}</td>
                 <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">{{ summary.budget.budget_amount }}</td>
                 <td>{{ summary.total_transactions }}</td>
                 <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">{{ summary.remaining }}</td>
                 <td>
                     <ul>
-                    {% for bt in summary.transactions %}
-                    <li>{{ bt.description }} - {{ bt.amount }} ({{ bt.user.username }})</li>
-                    {% endfor %}
+                        {% for bt in summary.transactions %}
+                        <li>{{ bt.description }} - {{ bt.amount }} ({{ bt.user.username }})</li>
+                        {% endfor %}
                     </ul>
                 </td>
             </tr>

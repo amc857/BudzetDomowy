@@ -7,12 +7,13 @@
 }
 
 /* Sections */
-.quick-actions, 
-.summary-section, 
-.recent-transactions {
-   background-color: #1E1E1E;
-   border-radius: 8px;
-   padding: 20px;
+.quick-actions,
+.summary-section,
+.recent-transactions,
+.budget-users-panel {
+    background-color: #1E1E1E;
+    border-radius: 8px;
+    padding: 20px;
 }
 
 /* Action Grid */

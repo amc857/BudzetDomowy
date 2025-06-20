@@ -10,17 +10,44 @@ from django.test import TestCase
 
 # TODO: Configure your database in settings.py and sync before running tests.
 
-class SimpleTest(TestCase):
-    """Tests for the application views."""
+class UserRegistrationTest(TestCase):
+    def test_register_user(self):
+        response = self.client.post(reverse('budzetApp:register'), {
+            'username': 'testuser',
+            'email': 'test@example.com',
+            'password': 'testpass123',
+            'confirm_password': 'testpass123',
+        })
+        self.assertEqual(response.status_code, 302)  # przekierowanie po sukcesie
+        self.assertTrue(Uzytkownicy.objects.filter(username='testuser').exists())
 
-    # Django requires an explicit setup() when running tests in PTVS
-    @classmethod
-    def setUpClass(cls):
-        super(SimpleTest, cls).setUpClass()
-        django.setup()
+class UserLoginTest(TestCase):
+    def setUp(self):
+        self.user = Uzytkownicy.objects.create(username='testuser', email='test@example.com', password='testpass123')
 
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    def test_login_user(self):
+        response = self.client.post(reverse('budzetApp:login'), {
+            'username': 'testuser',
+            'password': 'testpass123',
+        })
+        self.assertEqual(response.status_code, 302)  # przekierowanie po sukcesie
+
+class BudgetTest(TestCase):
+    def setUp(self):
+        self.user = Uzytkownicy.objects.create(username='testuser', email='test@example.com', password='testpass123')
+        self.client.session['user_id'] = self.user.id
+        self.client.session.save()
+
+    def test_create_budget(self):
+        response = self.client.post(reverse('budzetApp:create_budget'), {
+            'name': 'Bud¿et testowy',
+            'budget_amount': 1000,
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Budzety.objects.filter(name='Bud¿et testowy').exists())
+
+    def test_index_view(self):
+        Budzety.objects.create(name='Bud¿et testowy', budget_amount=1000)
+        response = self.client.get(reverse('budzetApp:index'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Strona g³ówna")

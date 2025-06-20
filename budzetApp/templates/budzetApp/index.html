@@ -193,7 +193,19 @@
             </span>
         </div>
         {% endif %}
+
     </div>
+
+    <div class="budget-users-panel">
+        <h3>Użytkownicy budżetu:</h3>
+        <ul>
+            {% for user in users_in_budget %}
+            <li>{{ user.username }} ({{ user.email }})</li>
+            {% endfor %}
+        </ul>
+    </div>
+    </div>
+
     {% endif %}
 </div>
 
