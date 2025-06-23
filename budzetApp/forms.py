@@ -6,6 +6,8 @@ from .models import Budzety, Transakcje, Uzytkownicy, Kategorie
 
 
 class TransakcjeForm(forms.ModelForm):
+
+
     class Meta:
         model = Transakcje
         fields = ['budget', 'category', 'amount', 'description']
@@ -78,16 +80,10 @@ class KategorieCreateForm(forms.ModelForm):
     
 
 class AddUserToBudgetForm(forms.Form):
-    user = forms.ModelChoiceField(queryset=Uzytkownicy.objects.none(), label="User")
     budget = forms.ModelChoiceField(queryset=Budzety.objects.all(), label="Budget")
 
     def __init__(self, *args, **kwargs):
         budgets_qs = kwargs.pop('budgets_qs', None)
-        selected_budget = kwargs.pop('selected_budget', None)
         super().__init__(*args, **kwargs)
         if budgets_qs is not None:
             self.fields['budget'].queryset = budgets_qs
-        if selected_budget:
-            self.fields['user'].queryset = Uzytkownicy.objects.exclude(budzety=selected_budget)
-        else:
-            self.fields['user'].queryset = Uzytkownicy.objects.all()

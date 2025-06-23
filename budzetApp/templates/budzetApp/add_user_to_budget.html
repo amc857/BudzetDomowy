@@ -4,6 +4,39 @@
 {% block styles %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/form.css' %}">
+<style>
+    .leave-btn {
+        background: linear-gradient(90deg, #e74c3c 0%, #c0392b 100%);
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 7px 22px;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.10);
+        transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+        margin: 4px 0 0 8px;
+        display: inline-block;
+        outline: none;
+        text-decoration: none;
+    }
+
+        .leave-btn:hover,
+        .leave-btn:focus {
+            background: linear-gradient(90deg, #c0392b 0%, #e74c3c 100%);
+            box-shadow: 0 4px 16px rgba(231, 76, 60, 0.18);
+            transform: translateY(-2px) scale(1.04);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .leave-btn:active {
+            background: #b53224;
+            transform: scale(0.98);
+        }
+</style>
 {% endblock styles %}
 
 {% block main %}
@@ -26,47 +59,55 @@
         </div>
     </form>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const budgetSelect = document.getElementById('id_budget');
-    const usersSection = document.getElementById('budget-users-section');
-    const usersList = document.getElementById('budget-users-list');
-    const budgetName = document.getElementById('budget-name');
+    {% if invite_link %}
+    <div class="invite-link-section" style="margin: 20px 0;">
+        <label for="invite-link">Copy link below:</label>
+        <input type="text" id="invite-link" value="{{ invite_link }}" class="btn-link" readonly style="width: 100%;" />
+        <button onclick="navigator.clipboard.writeText(document.getElementById('invite-link').value)" class="leave-btn" >Copy</button>
+    </div>
+    {% endif %}
 
-    function fetchUsers(budgetId, budgetText) {
-        if (!budgetId) {
-            usersSection.style.display = 'none';
-            return;
-        }
-        fetch("{% url 'budzetApp:get_budget_users' %}?budget_id=" + budgetId)
-            .then(response => response.json())
-            .then(data => {
-                usersSection.style.display = 'block';
-                budgetName.textContent = budgetText;
-                usersList.innerHTML = '';
-                if (data.users.length === 0) {
-                    usersList.innerHTML = '<li>Brak użytkowników w tym budżecie.</li>';
-                } else {
-                    data.users.forEach(function(user) {
-                        const li = document.createElement('li');
-                        li.textContent = user.username;
-                        usersList.appendChild(li);
-                    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const budgetSelect = document.getElementById('id_budget');
+            const usersSection = document.getElementById('budget-users-section');
+            const usersList = document.getElementById('budget-users-list');
+            const budgetName = document.getElementById('budget-name');
+
+            function fetchUsers(budgetId, budgetText) {
+                if (!budgetId) {
+                    usersSection.style.display = 'none';
+                    return;
                 }
-            });
-    }
+                fetch("{% url 'budzetApp:get_budget_users' %}?budget_id=" + budgetId)
+                    .then(response => response.json())
+                    .then(data => {
+                        usersSection.style.display = 'block';
+                        budgetName.textContent = budgetText;
+                        usersList.innerHTML = '';
+                        if (data.users.length === 0) {
+                            usersList.innerHTML = '<li>Brak użytkowników w tym budżecie.</li>';
+                        } else {
+                            data.users.forEach(function (user) {
+                                const li = document.createElement('li');
+                                li.textContent = user.username;
+                                usersList.appendChild(li);
+                            });
+                        }
+                    });
+            }
 
-    if (budgetSelect) {
-        budgetSelect.addEventListener('change', function() {
-            const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
-            fetchUsers(this.value, selectedOption.text);
+            if (budgetSelect) {
+                budgetSelect.addEventListener('change', function () {
+                    const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
+                    fetchUsers(this.value, selectedOption.text);
+                });
+                // Jeśli coś jest wybrane na starcie (np. po walidacji)
+                if (budgetSelect.value) {
+                    const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
+                    fetchUsers(budgetSelect.value, selectedOption.text);
+                }
+            }
         });
-        // Jeśli coś jest wybrane na starcie (np. po walidacji)
-        if (budgetSelect.value) {
-            const selectedOption = budgetSelect.options[budgetSelect.selectedIndex];
-            fetchUsers(budgetSelect.value, selectedOption.text);
-        }
-    }
-});
-</script>
-{% endblock main%}
+    </script>
+    {% endblock main%}

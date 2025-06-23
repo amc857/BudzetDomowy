@@ -21,6 +21,10 @@ class Budzety(models.Model):
     date = models.DateField(default=timezone.now)
     users = models.ManyToManyField(Uzytkownicy, through='UzytkownikBudzetPolaczenia', related_name='budzety')
 
+    def users_list(self):
+       return ", ".join([u.username for u in self.users.all()])
+    users_list.short_description = "Użytkownicy"
+
     def __str__(self):
         return f"{self.name}({self.id})"
 
@@ -65,7 +69,6 @@ class UzytkownikBudzetPolaczenia(models.Model):
         return f"{self.user.username} - {self.budget.name} as {self.role}"
 
 class BudgetInvitation(models.Model):
-    invited_user = models.ForeignKey(Uzytkownicy, on_delete=models.CASCADE, related_name='invitations')
     budget = models.ForeignKey(Budzety, on_delete=models.CASCADE)
     token = models.CharField(max_length=64, unique=True)
     created_at = models.DateTimeField(default=timezone.now)

@@ -1,39 +1,41 @@
+{% extends "budzetApp/temp.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pl">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logging</title> 
-    <link rel="stylesheet" href="{% static 'css/register_login.css' %}"> 
-</head>
+{% block title %}Logging{% endblock %}
 
-<body>
-    <div class="login-container">
-        <div class="main">
-            <h1>Welcome to the Login Page!</h1>
-            <form class="register_login-form" method="post" action="{% url 'budzetApp:login' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username">
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password">
-                </div>
-                <div class="form-actions">
-                    <button type="submit">Sign In</button>
-                </div>
-                <div class="form-actions">
-                    <a href="{% url 'budzetApp:register' %}" class="button">Register</a>
-                </div>
-            </form>
-        </div>
+{% block styles %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/register_login.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="login-container">
+    <div class="main">
+        <h1>Welcome to the Login Page!</h1>
+        <form class="register_login-form" method="post" action="{% url 'budzetApp:login' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password">
+            </div>
+            <div class="form-actions">
+                <button type="submit">Sign In</button>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'budzetApp:register' %}" class="button">Register</a>
+            </div>
+        </form>
     </div>
-    {# Jeśli potrzebujesz globalnych skryptów z template.html, musisz je tu jawnie dodać #}
-    {# <script src="{% static 'js/template.js' %}"></script> #}
-</body>
+</div>
+{% endblock %}
 
-</html>
+{% block navbar %}
+{% endblock %}
+
+{% block side_menu_login %}
+{% endblock %}

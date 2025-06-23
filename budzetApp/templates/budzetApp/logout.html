@@ -1,19 +1,25 @@
-<!DOCTYPE html>
-<html lang="pl">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Logging out</title>
-   {% load static %}
-   <link rel="stylesheet" href="{% static 'css/form.css' %}">
-</head>
-<body>
-   <div class="form-container">
-      <h2>You were logged out.</h2>
-      <p>Successfully logged out.</p>
-      <div class="form-actions">
-         <a href="{% url 'budzetApp:login' %}" class="back-link">Login again</a>
-      </div>
-   </div>
-</body>
-</html>
+{% extends "budzetApp/temp.html" %}
+{% load static %}
+
+{% block title %}Logging out{% endblock %}
+
+{% block styles %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %}
+
+{% block main %}
+<div class="form-container">
+    <h2>You were logged out.</h2>
+    <p>Successfully logged out.</p>
+    <div class="form-actions">
+        <a href="{% url 'budzetApp:login' %}" class="back-link">Login again</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block side_menu_login %}
+{% endblock %}

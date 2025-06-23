@@ -17,6 +17,34 @@
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/index.css' %}">
 <link rel="stylesheet" href="{% static 'css/index_buttons.css' %}">
+
+<!-- Styl przycisku-->
+<style>
+    .btn-submit {
+        background-color: purple;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 18px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 6px rgba(52, 152, 219, 0.08);
+        outline: none;
+        margin: 0 2px;
+        display: inline-block;
+    }
+
+        .btn-submit:hover,
+        .btn-submit:focus {
+            background-color: darkviolet;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.15);
+            color: #fff;
+            text-decoration: none;
+        }
+</style>
+
 {% endblock styles %}
 
 {% block scripts %}
@@ -164,7 +192,9 @@
                     </td>
                     <td>
                         <div class="action-buttons">
-                            {# Tutaj możesz dodać przyciski edycji/usuwania transakcji #}
+                            <form action="{% url 'budzetApp:transaction_detail' transaction.id %}" method="get" style="display:inline;">
+                                <button type="submit" class="btn-submit" style="padding: 4px 16px;">Szczegóły</button>
+                            </form>
                         </div>
                     </td>
                 </tr>

@@ -33,6 +33,9 @@ Budget list
                 <td>
                     <a class="action-btn" href="{% url 'budzetApp:index' %}?budget={{ summary.budget.id }}">
                         Show
+                    </a><br/>
+                    <a class="action-btn-red" href="{% url 'budzetApp:leave_budget' summary.budget.id %}?budget={{ summary.budget.id }}">
+                        Leave
                     </a>
                 </td>
                 <td data-label="Name">{{ summary.budget.name }}</td>
@@ -44,7 +47,15 @@ Budget list
                 <td>
                     <ul>
                         {% for bt in summary.transactions %}
-                        <li>{{ bt.description }} - {{ bt.amount }} ({{ bt.user.username }})</li>
+                        <li class="{% if bt.amount < 0 %}expense{% else %}income{% endif %}">
+                                {{ bt.description }} -
+                                {% if bt.amount < 0 %}
+                                {{ bt.amount|floatformat:"2"|slice:"1:" }}
+                                {% else %}
+                                {{ bt.amount }}
+                                {% endif %}
+                                ({{ bt.user.username }})
+                        </li>
                         {% endfor %}
                     </ul>
                 </td>

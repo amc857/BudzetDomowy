@@ -1,48 +1,49 @@
+{% extends "budzetApp/temp.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="pl">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rejestracja</title> 
-    <link rel="stylesheet" href="{% static 'css/register_login.css' %}"> 
+{% block title %}Register{% endblock %}
 
-</head>
+{% block styles %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/register_login.css' %}">
+{% endblock %}
 
-<body>
-    <div class="register-container">
-        <div class="main">
-            <h1>Sign Up for Your New Account!</h1>
-            <form class="register_login-form" method="post" action="{% url 'budzetApp:register' %}">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}">Username</label>
-                    <input type="text" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" placeholder="Enter your username" value="{{ form.username.value|default_if_none:'' }}">
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}">Email</label>
-                    <input type="text" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" placeholder="Enter your email" value="{{ form.email.value|default_if_none:'' }}">
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.password.id_for_label }}">Password</label>
-                    <input type="password" id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" placeholder="Enter your password">
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
-                    <input type="password" id="{{ form.confirm_password.id_for_label }}" name="{{ form.confirm_password.name }}" placeholder="Confirm your password">
-                </div>
-                <div class="form-actions">
-                    <button type="submit">Sign Up</button>
-                </div>
-                <div class="form-actions">
-                    <a href="{% url 'budzetApp:login' %}" class="button">Login</a>
-                </div>
-            </form>
-        </div>
+{% block main %}
+<div class="register-container">
+    <div class="main">
+        <h1>Sign Up for Your New Account!</h1>
+        <form class="register_login-form" method="post" action="{% url 'budzetApp:register' %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}">
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                <input type="text" id="{{ form.username.id_for_label }}" name="{{ form.username.name }}" placeholder="Enter your username" value="{{ form.username.value|default_if_none:'' }}">
+            </div>
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email</label>
+                <input type="text" id="{{ form.email.id_for_label }}" name="{{ form.email.name }}" placeholder="Enter your email" value="{{ form.email.value|default_if_none:'' }}">
+            </div>
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">Password</label>
+                <input type="password" id="{{ form.password.id_for_label }}" name="{{ form.password.name }}" placeholder="Enter your password">
+            </div>
+            <div class="form-group">
+                <label for="{{ form.confirm_password.id_for_label }}">Confirm Password</label>
+                <input type="password" id="{{ form.confirm_password.id_for_label }}" name="{{ form.confirm_password.name }}" placeholder="Confirm your password">
+            </div>
+            <div class="form-actions">
+                <button type="submit">Sign Up</button>
+            </div>
+            <div class="form-actions">
+                <a href="{% url 'budzetApp:login' %}" class="button">Login</a>
+            </div>
+        </form>
     </div>
-    {# Jeśli potrzebujesz globalnych skryptów z template.html, musisz je tu jawnie dodać #}
-    {# <script src="{% static 'js/template.js' %}"></script> #}
-</body>
+</div>
+{% endblock %}
 
-</html>
+{% block navbar %}
+{% endblock %}
+
+{% block side_menu_login %}
+{% endblock %}

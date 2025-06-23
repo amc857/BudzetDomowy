@@ -9,7 +9,15 @@
         color: #e0e0e0;
         padding: 20px;
     }
+    .income {
+        font-weight: bold;
+        border-left: 3px solid green;
+    }
 
+    .expense {
+        font-weight: bold;
+        border-left: 3px solid red;
+    }
 
     .table-container {
         width: 100%;
@@ -28,7 +36,8 @@
         background-color: transparent;
     }
 
-    th, td {
+    th,
+    td {
         padding: 16px 20px;
         text-align: left;
         font-size: 16px;
@@ -98,25 +107,26 @@
         body {
             padding: 10px;
         }
-        
+
         h1 {
             font-size: 28px;
             margin: 20px 0;
         }
-        
+
         .table-container {
             border-radius: 8px;
         }
-        
-        th, td {
+
+        th,
+        td {
             padding: 12px 10px;
             font-size: 14px;
         }
-        
+
         table {
             font-size: 14px;
         }
-        
+
         td ul li {
             font-size: 13px;
             padding: 6px 8px;
@@ -124,17 +134,22 @@
     }
 
     @media (max-width: 480px) {
-    
-        table, thead, tbody, th, td, tr {
+
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
             display: block;
         }
-        
+
         thead tr {
             position: absolute;
             top: -9999px;
             left: -9999px;
         }
-        
+
         tr {
             border: 1px solid #333333;
             margin-bottom: 15px;
@@ -142,7 +157,7 @@
             border-radius: 8px;
             background-color: #1e1e1e;
         }
-        
+
         td {
             border: none;
             position: relative;
@@ -150,7 +165,7 @@
             padding-top: 10px;
             padding-bottom: 10px;
         }
-        
+
         td:before {
             content: attr(data-label) ": ";
             position: absolute;
@@ -191,3 +206,71 @@
         background-color: #555555;
     }
 
+    .action-btn-red {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: darkred;
+        color: #ffffff;
+        text-decoration: none;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        margin: 2px;
+    }
+
+    .action-btn-red:hover {
+        background-color: red;
+        transform: translateY(-1px);
+    }
+
+    .action-btn-red.secondary {
+        background-color: darkred;
+    }
+
+    .action-btn-red.secondary:hover {
+        background-color: red;
+    }
+
+    td[data-label="Members"] ul li {
+        background-color: #333333;
+        border-left: 3px solid #4caf50;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 12px 8px 25px;
+        position: relative;
+    }
+
+
+    td[data-label="Members"] ul li::before {
+        content: '\f007';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        color: #4caf50;
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    @media (max-width: 768px) {
+        td[data-label="Members"] ul li {
+            font-size: 12px;
+            padding: 6px 8px 6px 25px;
+        }
+
+        td[data-label="Members"] ul li::before {
+            left: 8px;
+            font-size: 12px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        td[data-label="Members"] ul li {
+            padding: 8px 12px 8px 30px;
+        }
+    }
+
+    

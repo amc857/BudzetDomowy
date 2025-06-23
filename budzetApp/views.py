@@ -10,6 +10,7 @@ from django.db.models import Sum
 from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
+from urllib.parse import urlencode
 
 # App models
 from budzetApp.models import (
@@ -84,31 +85,28 @@ def index(request):
 
 # Strona logowania
 def login(request):
-    
-    if request.method == 'POST':
+    next_url = request.GET.get('next') or request.POST.get('next') or 'budzetApp:index'
 
+    if request.method == 'POST':
         username = request.POST.get('username')
-        #email = request.POST.get('email')
         password = request.POST.get('password')
 
-
-
-        # Sprawdzenie, czy użytkownik istnieje w bazie danych
         user = Uzytkownicy.objects.filter(username=username, password=password)
         if user.exists():
-
-            request.session['user_id'] = user.first().id 
-
-            return redirect('budzetApp:index')
+            request.session['user_id'] = user.first().id
+            messages.info(request, f"Przeniesienie na {next_url}.")
+            return redirect(next_url)
         else:
-            # Użytkownik nie istnieje
             messages.error(request, "Nie znaleziono użytkownika o podanych danych.")
-            return redirect('budzetApp:login')
-            
-    return render(request, 'budzetApp/login.html')
+            return render(request, 'budzetApp/login.html', {'next': next_url})
+
+    return render(request, 'budzetApp/login.html', {'next': next_url})
+
 
 # Strona rejestracji użytkownika
 def register(request):
+    next_url = request.GET.get('next') or request.POST.get('next') or None
+
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -117,14 +115,17 @@ def register(request):
             user.password = form.cleaned_data['password'] 
             user.save()
             messages.success(request, "Rejestracja zakończona sukcesem! Możesz się teraz zalogować.")
+            if next_url:
+                login_url = f"{reverse_lazy('budzetApp:login')}?{urlencode({'next': next_url})}"
+                return redirect(login_url)
             return redirect('budzetApp:login') 
         else:
             messages.error(request, "Rejestracja nie udana.")
-            return render(request, 'budzetApp/register.html', {'form': form})
+            return render(request, 'budzetApp/register.html', {'form': form, 'next': next_url})
     else:
         form = UserRegistrationForm()
         
-    return render(request, 'budzetApp/register.html', {'form': form})
+    return render(request, 'budzetApp/register.html', {'form': form, 'next': next_url})
 
 # Strona wylogowania
 def logout_view(request):
@@ -206,38 +207,25 @@ def add_user_to_budget(request):
 
     selected_budget = None
     current_users = []
+    invite_link = None
+
     if request.method == 'POST':
-        budget_id = request.POST.get('budget')
-        if budget_id:
-            selected_budget = Budzety.objects.get(pk=budget_id)
-            current_users = selected_budget.users.all()
-        form = AddUserToBudgetForm(request.POST, budgets_qs=user_budgets, selected_budget=selected_budget)
+        form = AddUserToBudgetForm(request.POST, budgets_qs=user_budgets)
         if form.is_valid():
-            selected_user = form.cleaned_data['user']
             selected_budget = form.cleaned_data['budget']
 
-            # Generowanie tokena i zapis zaproszenia
+            # Generowanie tokena i zapis zaproszenia (bez invited_user)
             token = secrets.token_urlsafe(32)
             invitation = BudgetInvitation.objects.create(
-                invited_user=selected_user,
                 budget=selected_budget,
                 token=token
             )
 
-            # Wysyłka e-maila z linkiem
             invite_link = request.build_absolute_uri(
                 f"/accept_invitation/?token={token}"
             )
-            send_mail(
-                subject="Invitation to budget",
-                message=f"You were invited to budget '{selected_budget.name}'. Click to join: {invite_link}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[selected_user.email],
-                fail_silently=True,
-            )
-
-            messages.success(request, f"Invitation was sent to {selected_user.username} ({selected_user.email}).")
-            return redirect('budzetApp:add_user_to_budget')
+            messages.success(request, f"Skopiuj link i przekaż użytkownikowi: {invite_link}")
+            current_users = selected_budget.users.all()
     else:
         form = AddUserToBudgetForm(budgets_qs=user_budgets)
         budget_id = request.GET.get('budget')
@@ -245,7 +233,7 @@ def add_user_to_budget(request):
             try:
                 selected_budget = Budzety.objects.get(pk=budget_id)
                 current_users = selected_budget.users.all()
-                form = AddUserToBudgetForm(budgets_qs=user_budgets, selected_budget=selected_budget)
+                form = AddUserToBudgetForm(budgets_qs=user_budgets, initial={'budget': selected_budget})
             except Budzety.DoesNotExist:
                 pass
 
@@ -253,6 +241,7 @@ def add_user_to_budget(request):
         'form': form,
         'current_users': current_users,
         'selected_budget': selected_budget,
+        'invite_link': invite_link,
     })
 
 # Strona pobierania kategorii budżetu
@@ -267,15 +256,51 @@ def get_budget_categories(request):
 # Strona akceptacji zaproszenia do budżetu
 def accept_invitation(request):
     token = request.GET.get('token')
+    if not token:
+        messages.error(request, "Brak tokena zaproszenia.")
+        return redirect('budzetApp:index')
+
+    user_id = request.session.get('user_id')
+    if not user_id:
+
+        next_url = f"{request.path}?token={token}"
+        login_url = f"{reverse_lazy('budzetApp:login')}?{urlencode({'next': next_url})}"
+
+        messages.info(request, "Zaloguj się, aby dołączyć do budżetu.")
+        return redirect(login_url)
+
     invitation = get_object_or_404(BudgetInvitation, token=token, accepted=False)
-    user = invitation.invited_user
+    user = Uzytkownicy.objects.get(pk=user_id)
     budget = invitation.budget
 
-    # Dodaj użytkownika do budżetu
-    budget.users.add(user)
-    invitation.accepted = True
-    invitation.save()
-    messages.success(request, f"You joined the budget {budget.name}.")
+    if user in budget.users.all():
+        messages.info(request, "Jesteś już członkiem tego budżetu.")
+    else:
+        budget.users.add(user)
+        invitation.accepted = True
+        invitation.save()
+        messages.success(request, f"Dołączyłeś do budżetu {budget.name}.")
+
+    return redirect('budzetApp:index')
+
+# Strona do opuszczania budzetow
+def leave_budget(request, budget_id):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Musisz być zalogowany.")
+        return redirect('budzetApp:login')
+
+    user = Uzytkownicy.objects.get(pk=user_id)
+    budget = get_object_or_404(Budzety, pk=budget_id)
+
+    if user in budget.users.all():
+        budget.users.remove(user)
+        if budget.users.count() == 0:
+            budget.delete()
+        messages.success(request, f"Opuszczono budżet {budget.name}.")
+    else:
+        messages.info(request, "Nie jesteś członkiem tego budżetu.")
+
     return redirect('budzetApp:budget_list')
 
 #----------------------------------------------------------------------
@@ -298,6 +323,12 @@ def add_transaction(request):
         if form.is_valid():
             transaction = form.save(commit=False)
             transaction.user = user
+            amount = transaction.amount
+            is_expense = 'is_expense' in request.POST  # True jeśli zaznaczony
+
+            if is_expense and amount > 0:
+                transaction.amount = -amount
+
             transaction.save()
             return redirect('budzetApp:budget_list')
     else:
@@ -305,7 +336,7 @@ def add_transaction(request):
     return render(request, 'budzetApp/addtransaction.html', {'form': form})
 
 # Strona listy transakcji
-def transaction_list(request):
+'''def transaction_list(request):
     user_id = request.session['user_id']
     transactions = []
     if user_id:
@@ -314,8 +345,24 @@ def transaction_list(request):
     context = {
         'transactions': transactions
     }
-    return render(request, 'budzetApp/transaction.html', context)
+    return render(request, 'budzetApp/transaction.html', context)'''
 
+# Strona szczegółów transakcji
+def transaction_detail(request, transaction_id):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Musisz być zalogowany, aby zobaczyć szczegóły transakcji.")
+        return redirect('budzetApp:login')
+
+    transaction = get_object_or_404(Transakcje, pk=transaction_id)
+    # Opcjonalnie: sprawdź, czy użytkownik ma dostęp do tej transakcji
+    if transaction.budget not in Budzety.objects.filter(users__id=user_id):
+        messages.error(request, "Nie masz dostępu do tej transakcji.")
+        return redirect('budzetApp:index')
+
+    return render(request, 'budzetApp/transaction_detail.html', {'transaction': transaction})
+
+    
 #----------------------------------------------------------------------
 
 # Zarządzanie kategoriami
@@ -338,47 +385,6 @@ def create_category(request):
         form = KategorieCreateForm(budgets_qs=user_budgets)
     return render(request, 'budzetApp/create_category.html', {'form': form})
 
-# Strona dodawania użytkownika do budżetu
-def add_user_to_budget(request):
-    user_id = request.session.get('user_id')
-    if not user_id:
-        messages.error(request, "Musisz być zalogowany.")
-        return redirect('budzetApp:login')
-
-    user = Uzytkownicy.objects.get(pk=user_id)
-    user_budgets = Budzety.objects.filter(users=user)
-
-    selected_budget = None
-    current_users = []
-    if request.method == 'POST':
-        budget_id = request.POST.get('budget')
-        if budget_id:
-            selected_budget = Budzety.objects.get(pk=budget_id)
-            current_users = selected_budget.users.all()
-        form = AddUserToBudgetForm(request.POST, budgets_qs=user_budgets, selected_budget=selected_budget)
-        if form.is_valid():
-            selected_user = form.cleaned_data['user']
-            selected_budget = form.cleaned_data['budget']
-            selected_budget.users.add(selected_user)
-            messages.success(request, f"User {selected_user.username} was added to budget {selected_budget.name}.")
-            return redirect('budzetApp:add_user_to_budget')  # Odśwież, by zobaczyć aktualną listę
-    else:
-        form = AddUserToBudgetForm(budgets_qs=user_budgets)
-        # Jeśli GET z parametrem budget, pokaż obecnych użytkowników
-        budget_id = request.GET.get('budget')
-        if budget_id:
-            try:
-                selected_budget = Budzety.objects.get(pk=budget_id)
-                current_users = selected_budget.users.all()
-                form = AddUserToBudgetForm(budgets_qs=user_budgets, selected_budget=selected_budget)
-            except Budzety.DoesNotExist:
-                pass
-
-    return render(request, 'budzetApp/add_user_to_budget.html', {
-        'form': form,
-        'current_users': current_users,
-        'selected_budget': selected_budget,
-    })
 
 # Strona pobierania użytkowników budżetu
 def get_budget_users(request):

@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    {% block navbar %}
     <nav class="navbar">
         <div class="navbar-left">
             <div id="menu-toggle" class="menu-icon" onclick="toggleMenu()">
@@ -36,23 +37,36 @@
         </div>
         {% endif %}
     </nav>
+    {% endblock navbar %}
 
+    {% block side_menu_login %}
     <div class="side-menu" id="sideMenu">
         {% block side_menu %}
         <ul>
             <li><a href="{% url 'budzetApp:index' %}" class="menu-item">📊 Main panel</a></li>
             <li><a href="{% url 'budzetApp:create_budget' %}" class="menu-item">💰 Create Budgets</a></li>
             <li><a href="{% url 'budzetApp:budget_list' %}" class="menu-item">🧾 Show Budgets</a></li>
-            <li><a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">💳 Transactions</a></li>
+            <li><a href="{% url 'budzetApp:addtransaction' %}" class="menu-item">💳 Add Transactions</a></li>
             <li><a href="{% url 'budzetApp:create_category' %}" class="menu-item">📋 Create Category</a></li>
             <li><a href="{% url 'budzetApp:add_user_to_budget' %}" class="menu-item">👥 Add User to Budget</a></li>
         </ul>
         {% endblock side_menu %}
     </div>
+    {% endblock side_menu_login %}
 
     <main class="main-content">
         {% block main %}{% endblock main %}
     </main>
+
+    {% if messages %}
+    <div id="global-messages" class="messages-bottom-right">
+        <ul>
+            {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 
     {% block scripts %}
     <script>
@@ -70,6 +84,13 @@
             userDropdown.classList.toggle('show');
             userMenuBtn.classList.toggle('active');
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const msg = document.getElementById('global-messages');
+            if (msg) {
+                setTimeout(() => { msg.style.display = 'none'; }, 5000);
+            }
+        });
 
         userMenuBtn?.addEventListener('click', toggleUserMenu);
 

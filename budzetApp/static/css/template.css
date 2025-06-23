@@ -7,6 +7,53 @@ body {
     overflow-x: hidden;
 }
 
+.messages-bottom-right {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 9999;
+    min-width: 250px;
+    max-width: 400px;
+    background: rgba(30,30,30,0.95);
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    padding: 16px 24px;
+    font-size: 1rem;
+    animation: fadeIn 0.5s;
+}
+
+    .messages-bottom-right ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .messages-bottom-right li {
+        margin-bottom: 8px;
+        padding: 0;
+    }
+
+        .messages-bottom-right li.error, .messages-bottom-right li.danger {
+            color: #ffb3b3;
+        }
+
+        .messages-bottom-right li.success {
+            color: #b3ffb3;
+        }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .navbar {
     position: fixed;
     top: 0;

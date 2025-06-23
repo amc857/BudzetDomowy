@@ -8,6 +8,7 @@ Add Transaction
 {% block styles %}
     {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/form.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form-switch.css' %}">
 {% endblock styles %}
 
 {% block main %}
@@ -24,11 +25,22 @@ Add Transaction
             {% endif %}
         </div>
         {% endfor %}
-        <div class="form-actions">
-            <button type="submit" class="btn-submit">Add Transaction</button>
-            <a href="{% url 'budzetApp:transaction_list' %}" class="btn-cancel">Cancel</a>
+
+        <div>
+            Income
+            <label class="switch">
+                <input type="checkbox" name="is_expense">
+                <span class="slider round"></span>
+            </label>
+            Expense
         </div>
-    </form>
+
+
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Add Transaction</button>
+                <a href="{% url 'budzetApp:index' %}" class="btn-cancel">Cancel</a>
+            </div>
+</form>
     {% if messages %}
     <ul class="messages">
         {% for message in messages %}
@@ -41,7 +53,7 @@ Add Transaction
 {% endblock %}
 
 {% block scripts %}
- {{ block.super }}
+{{ block.super }}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const budgetSelect = document.getElementById('id_budget');

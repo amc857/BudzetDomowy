@@ -17,8 +17,12 @@ body {
     margin-bottom: 20px;
 }
 
+.main-content {
+    padding: initial;
+}
+
 .register_login-form {
-    max-width: 450px; 
+    max-width: 450px;
     margin: 50px auto;
     padding: 40px;
     background-color: #1e1e1e;
