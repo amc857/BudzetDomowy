@@ -18,6 +18,8 @@ class TransakcjeForm(forms.ModelForm):
         if budgets_qs is not None:
             self.fields['budget'].queryset = budgets_qs
 
+        self.fields['budget'].label_from_instance = lambda obj: obj.name
+
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label="Password")
@@ -78,12 +80,19 @@ class KategorieCreateForm(forms.ModelForm):
         if budgets_qs is not None:
             self.fields['budget'].queryset = budgets_qs
     
+        self.fields['budget'].label_from_instance = lambda obj: obj.name
 
 class AddUserToBudgetForm(forms.Form):
-    budget = forms.ModelChoiceField(queryset=Budzety.objects.all(), label="Budget")
+    budget = forms.ModelChoiceField(
+        queryset=Budzety.objects.all(),
+        label="Budget"
+    )
 
     def __init__(self, *args, **kwargs):
         budgets_qs = kwargs.pop('budgets_qs', None)
         super().__init__(*args, **kwargs)
         if budgets_qs is not None:
             self.fields['budget'].queryset = budgets_qs
+
+        # Ustaw własną metodę label_from_instance
+        self.fields['budget'].label_from_instance = lambda obj: obj.name

@@ -1,4 +1,4 @@
-    body {
+body {
         margin: 0;
         padding: 0;
         background-color: #121212;
@@ -273,4 +273,25 @@
         }
     }
 
-    
+    /* Popup button style override */
+.popup-actions .action-btn,
+.popup-actions .action-btn-red {
+    background-color: #6200ea;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin: 2px;
+}
+
+.popup-actions .action-btn:hover,
+.popup-actions .action-btn-red:hover {
+    background-color: #7c4dff;
+    color: #fff;
+    transform: translateY(-1px);
+}
+

@@ -8,6 +8,44 @@ Budget list
 {% block styles %}
 {{ block.super }}
 <link rel="stylesheet" href="{% static 'css/budget_list.css' %}">
+<style>
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(18,18,18,0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+.popup-overlay.active {
+    display: flex;
+}
+.popup-content {
+    background: #232323;
+    padding: 2em 1.5em;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    max-width: 320px;
+    margin: auto;
+    text-align: center;
+    color: #e0e0e0;
+    border: 1px solid #333;
+}
+.popup-title {
+    font-size: 1.2em;
+    margin-bottom: 1.5em;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.popup-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+}
+</style>
 {% endblock styles %}
 
 {% block main %}
@@ -16,7 +54,6 @@ Budget list
     <table>
         <thead>
             <tr>
-                <th>Action</th>
                 <th>Name</th>
                 <th>Date</th>
                 <th>Budget Amount</th>
@@ -24,55 +61,97 @@ Budget list
                 <th>Left</th>
                 <th>Transactions</th>
                 <th>Members</th>
+                <!-- Usunięto <th>Action</th> i przeniesiono na koniec -->
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for summary in budget_summaries %}
 
             <tr>
-                <td>
-                    <a class="action-btn" href="{% url 'budzetApp:index' %}?budget={{ summary.budget.id }}">
-                        Show
-                    </a><br/>
-                    <a class="action-btn-red" href="{% url 'budzetApp:leave_budget' summary.budget.id %}?budget={{ summary.budget.id }}">
-                        Leave
-                    </a>
-                </td>
                 <td data-label="Name">{{ summary.budget.name }}</td>
                 <td>{{ summary.budget.date }}</td>
-                <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">{{ summary.budget.budget_amount }}
+                <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">
+                    {{ summary.budget.budget_amount }} zł
                 </td>
-                <td>{{ summary.total_transactions }}</td>
-                <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">{{ summary.remaining }}</td>
+                <td>
+                    {{ summary.total_transactions }} zł
+                </td>
+                <td class="amount {% if summary.remaining < 0 %}negative{% endif %}">
+                    {{ summary.remaining }} zł
+                </td>
                 <td>
                     <ul>
                         {% for bt in summary.transactions %}
                         <li class="{% if bt.amount < 0 %}expense{% else %}income{% endif %}">
-                                {{ bt.description }} -
-                                {% if bt.amount < 0 %}
-                                {{ bt.amount|floatformat:"2"|slice:"1:" }}
-                                {% else %}
-                                {{ bt.amount }}
-                                {% endif %}
-                                ({{ bt.user.username }})
+                            {{ bt.description }} -
+                            {% if bt.amount < 0 %}
+                                {{ bt.amount|floatformat:"2"|slice:"1:" }} zł
+                            {% else %}
+                                {{ bt.amount }} zł
+                            {% endif %}
                         </li>
                         {% endfor %}
                     </ul>
                 </td>
                 <td data-label="Members">
                     <ul>
-                        {% for user in summary.users%}
+                        {% for user in summary.users %}
                         <li>{{ user.username }}</li>
                         {% endfor %}
                     </ul>
                 </td>
+                <!-- Przeniesiono kolumnę Action na koniec -->
+                <td>
+                    <a class="action-btn" href="{% url 'budzetApp:index' %}?budget={{ summary.budget.id }}">
+                        Show
+                    </a><br/>
+                    <a class="action-btn-red" 
+                       href="{% url 'budzetApp:leave_budget' summary.budget.id %}?budget={{ summary.budget.id }}"
+                       onclick="return showConfirmPopup(this);">
+                       Leave
+                    </a>
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" class="empty-state">No budgets to show.</td>
+                <td colspan="8" class="empty-state">No budgets to show.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<!-- Popup HTML -->
+<div id="confirmPopup" class="popup-overlay">
+  <div class="popup-content">
+    <p class="popup-title">Are you sure you want to leave this budget ?</p>
+    <div class="popup-actions">
+      <button id="popupYes" class="action-btn">Yes</button>
+      <button id="popupNo" class="action-btn-red">No</button>
+    </div>
+  </div>
+</div>
+
 {% endblock main %}
+
+{% block scripts %}
+{{ block.super }}
+<script>
+let leaveUrl = null;
+function showConfirmPopup(link) {
+    leaveUrl = link.href;
+    document.getElementById('confirmPopup').classList.add('active');
+    return false;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('popupYes').onclick = function() {
+        window.location.href = leaveUrl;
+    };
+    document.getElementById('popupNo').onclick = function() {
+        document.getElementById('confirmPopup').classList.remove('active');
+        leaveUrl = null;
+    };
+});
+</script>
+{% endblock scripts %}

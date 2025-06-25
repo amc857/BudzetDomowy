@@ -11,6 +11,7 @@ from django.core.paginator import Paginator
 from django.core.mail import send_mail
 from django.conf import settings
 from urllib.parse import urlencode
+from django.views.decorators.csrf import csrf_exempt
 
 # App models
 from budzetApp.models import (
@@ -38,6 +39,16 @@ def index(request):
     total_income = 0
     total_expenses = 0
     transactions = []
+    budget_amount = None
+    category_expenses = (
+    Transakcje.objects
+    .filter(budget=selected_budget, amount__lt=0)
+    .values('category__category_name')
+    .annotate(total=Sum('amount'))
+    .order_by('category__category_name')
+)
+    for cat in category_expenses:
+        cat['total'] = abs(cat['total'])
 
     if user_id:
         user = Uzytkownicy.objects.get(pk=user_id)
@@ -52,6 +63,18 @@ def index(request):
             transactions = Transakcje.objects.filter(budget=selected_budget).order_by('-transaction_date')
             total_income = transactions.filter(amount__gt=0).aggregate(Sum('amount'))['amount__sum'] or 0
             total_expenses = transactions.filter(amount__lt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+            budget_amount = selected_budget.budget_amount  # <-- dodaj tę linię
+            # Suma wydatków (ujemne kwoty) według kategorii
+            category_expenses = (
+                Transakcje.objects
+                .filter(budget=selected_budget, amount__lt=0)
+                .values('category__category_name')
+                .annotate(total=Sum('amount'))
+                .order_by('category__category_name')
+            )
+            # Zamień na dodatnie wartości (dla wykresu)
+            for cat in category_expenses:
+                cat['total'] = abs(cat['total'])
     else:
         messages.error(request, "Please log in or create account.")
         return redirect('budzetApp:login')
@@ -67,6 +90,7 @@ def index(request):
         total_income = transactions.filter(amount__gt=0).aggregate(Sum('amount'))['amount__sum'] or 0
         total_expenses = transactions.filter(amount__lt=0).aggregate(Sum('amount'))['amount__sum'] or 0
         users_in_budget = selected_budget.users.all()
+        budget_amount = selected_budget.budget_amount  # <-- dodaj tę linię
 
     context = {
         'budgets': budgets,
@@ -78,6 +102,8 @@ def index(request):
         'total_income': total_income,
         'total_expenses': total_expenses,
         'users_in_budget': users_in_budget,
+        'budget_amount': budget_amount,  # <-- dodaj do contextu
+        'category_expenses': category_expenses,
     }
 
     return render(request, 'budzetApp/index.html', context)
@@ -137,10 +163,47 @@ def logout_view(request):
 # Strona edycji profilu użytkownika
 def edit_profile(request):
     user_id = request.session.get('user_id')
-    current_user = None
-    if user_id:
-        current_user = Uzytkownicy.objects.get(pk=user_id)
-    # ...obsługa POST i walidacja...
+    if not user_id:
+        messages.error(request, "You need to be logged in.")
+        return redirect('budzetApp:login')
+
+    current_user = Uzytkownicy.objects.get(pk=user_id)
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+
+        errors = []
+
+        # Walidacja unikalności emaila
+        if Uzytkownicy.objects.exclude(pk=current_user.pk).filter(email=email).exists():
+            errors.append("Podany adres e-mail jest już zajęty.")
+
+        # Walidacja unikalności username
+        if Uzytkownicy.objects.exclude(pk=current_user.pk).filter(username=username).exists():
+            errors.append("Podana nazwa użytkownika jest już zajęta.")
+
+        # Walidacja haseł
+        if password or confirm_password:
+            if password != confirm_password:
+                errors.append("Hasła nie są zgodne.")
+            elif len(password) < 6:
+                errors.append("Hasło musi mieć co najmniej 6 znaków.")
+
+        if errors:
+            for err in errors:
+                messages.error(request, err)
+        else:
+            current_user.username = username
+            current_user.email = email
+            if password:
+                current_user.password = password  # Uwaga: w prawdziwej aplikacji hasła powinny być hashowane!
+            current_user.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect('budzetApp:edit_profile')
+
     return render(request, 'budzetApp/edit_profile.html', {'current_user': current_user})
 
 #----------------------------------------------------------------------
@@ -364,7 +427,15 @@ def transaction_detail(request, transaction_id):
 
     return render(request, 'budzetApp/transaction_detail.html', {'transaction': transaction})
 
-    
+def transaction_detail_api(request, pk):
+    transaction = get_object_or_404(Transakcje, pk=pk)
+    return JsonResponse({
+        "transaction_date": transaction.transaction_date.strftime('%Y-%m-%d'),
+        "description": transaction.description,
+        "category": str(transaction.category),
+        "amount": transaction.amount,
+        "user": transaction.user.username,
+    })
 #----------------------------------------------------------------------
 
 # Zarządzanie kategoriami
@@ -402,4 +473,24 @@ def get_budget_users(request):
     return JsonResponse({'users': users_list})
 
 #----------------------------------------------------------------------
+
+def delete_transaction(request, transaction_id):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "You need to be logged in.")
+        return redirect('budzetApp:login')
+
+    transaction = get_object_or_404(Transakcje, pk=transaction_id)
+    # Opcjonalnie: sprawdź, czy użytkownik ma prawo do tej transakcji
+    if transaction.budget not in Budzety.objects.filter(users__id=user_id):
+        messages.error(request, "You do not have access to this transaction.")
+        return redirect('budzetApp:index')
+
+    if request.method == "POST":
+        transaction.delete()
+        messages.success(request, "Transaction deleted.")
+        return redirect('budzetApp:index')
+
+    messages.error(request, "Invalid request.")
+    return redirect('budzetApp:index')
 

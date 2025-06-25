@@ -9,17 +9,44 @@
     {% block styles %}
     <link rel="stylesheet" href="{% static 'css/template.css' %}">
     {% endblock styles %}
+    
 </head>
 
 <body>
+
     {% block navbar %}
-    <nav class="navbar">
+    <nav class="navbar" style="display: flex; align-items: center; justify-content: space-between; padding: 0 32px;">
         <div class="navbar-left">
             <div id="menu-toggle" class="menu-icon" onclick="toggleMenu()">
                 <div></div>
                 <div></div>
                 <div></div>
             </div>
+        </div>
+
+        <div class="navbar-center" style="flex: 1; display: flex; justify-content: center;">
+            <a href="{% url 'budzetApp:index' %}"
+               style="
+                    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+                    font-size: 2.1rem;
+                    font-weight: 800;
+                    letter-spacing: 1px;
+                    color: #fff;
+                    background: linear-gradient(90deg, #6200ea 0%, #7c4dff 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    text-decoration: none;
+                    transition: opacity 0.18s;
+                    text-align: center;
+                    line-height: 1.3;
+                    padding-bottom: 6px;
+               "
+               onmouseover="this.style.opacity='0.8'"
+               onmouseout="this.style.opacity='1'"
+            >
+                Home Budget App
+            </a>
         </div>
 
         {% if session_user %}
