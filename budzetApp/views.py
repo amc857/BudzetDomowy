@@ -52,6 +52,9 @@ def index(request):
             transactions = Transakcje.objects.filter(budget=selected_budget).order_by('-transaction_date')
             total_income = transactions.filter(amount__gt=0).aggregate(Sum('amount'))['amount__sum'] or 0
             total_expenses = transactions.filter(amount__lt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+    else:
+        messages.error(request, "Please log in or create account.")
+        return redirect('budzetApp:login')
 
 
     paginator = Paginator(transactions, 10)
@@ -94,10 +97,9 @@ def login(request):
         user = Uzytkownicy.objects.filter(username=username, password=password)
         if user.exists():
             request.session['user_id'] = user.first().id
-            messages.info(request, f"Przeniesienie na {next_url}.")
             return redirect(next_url)
         else:
-            messages.error(request, "Nie znaleziono użytkownika o podanych danych.")
+            messages.error(request, "Username/password do not match.")
             return render(request, 'budzetApp/login.html', {'next': next_url})
 
     return render(request, 'budzetApp/login.html', {'next': next_url})
@@ -105,7 +107,7 @@ def login(request):
 
 # Strona rejestracji użytkownika
 def register(request):
-    next_url = request.GET.get('next') or request.POST.get('next') or None
+    next_url = request.GET.get('next') or request.POST.get('next') or 'budzetApp:index'
 
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -114,13 +116,13 @@ def register(request):
             user = form.save(commit=False)
             user.password = form.cleaned_data['password'] 
             user.save()
-            messages.success(request, "Rejestracja zakończona sukcesem! Możesz się teraz zalogować.")
+            messages.success(request, "Register succesful, you can now log in.")
             if next_url:
                 login_url = f"{reverse_lazy('budzetApp:login')}?{urlencode({'next': next_url})}"
                 return redirect(login_url)
             return redirect('budzetApp:login') 
         else:
-            messages.error(request, "Rejestracja nie udana.")
+            messages.error(request, "Register failed, please try again.")
             return render(request, 'budzetApp/register.html', {'form': form, 'next': next_url})
     else:
         form = UserRegistrationForm()
@@ -199,7 +201,7 @@ def budget_list(request):
 def add_user_to_budget(request):
     user_id = request.session.get('user_id')
     if not user_id:
-        messages.error(request, "Musisz być zalogowany.")
+        messages.error(request, "You need to be logged to add users to budget.")
         return redirect('budzetApp:login')
 
     user = Uzytkownicy.objects.get(pk=user_id)
@@ -224,7 +226,7 @@ def add_user_to_budget(request):
             invite_link = request.build_absolute_uri(
                 f"/accept_invitation/?token={token}"
             )
-            messages.success(request, f"Skopiuj link i przekaż użytkownikowi: {invite_link}")
+            messages.success(request, f"Link copied")
             current_users = selected_budget.users.all()
     else:
         form = AddUserToBudgetForm(budgets_qs=user_budgets)
@@ -257,7 +259,7 @@ def get_budget_categories(request):
 def accept_invitation(request):
     token = request.GET.get('token')
     if not token:
-        messages.error(request, "Brak tokena zaproszenia.")
+        messages.error(request, "Did not find token.")
         return redirect('budzetApp:index')
 
     user_id = request.session.get('user_id')
@@ -266,7 +268,7 @@ def accept_invitation(request):
         next_url = f"{request.path}?token={token}"
         login_url = f"{reverse_lazy('budzetApp:login')}?{urlencode({'next': next_url})}"
 
-        messages.info(request, "Zaloguj się, aby dołączyć do budżetu.")
+        messages.info(request, "You need to be logged in to join budget.")
         return redirect(login_url)
 
     invitation = get_object_or_404(BudgetInvitation, token=token, accepted=False)
@@ -274,12 +276,12 @@ def accept_invitation(request):
     budget = invitation.budget
 
     if user in budget.users.all():
-        messages.info(request, "Jesteś już członkiem tego budżetu.")
+        messages.info(request, "You are already in that budget.")
     else:
         budget.users.add(user)
         invitation.accepted = True
         invitation.save()
-        messages.success(request, f"Dołączyłeś do budżetu {budget.name}.")
+        messages.success(request, f"You have joined {budget.name}.")
 
     return redirect('budzetApp:index')
 
@@ -287,7 +289,7 @@ def accept_invitation(request):
 def leave_budget(request, budget_id):
     user_id = request.session.get('user_id')
     if not user_id:
-        messages.error(request, "Musisz być zalogowany.")
+        messages.error(request, "You need to be logged in.")
         return redirect('budzetApp:login')
 
     user = Uzytkownicy.objects.get(pk=user_id)
@@ -297,9 +299,9 @@ def leave_budget(request, budget_id):
         budget.users.remove(user)
         if budget.users.count() == 0:
             budget.delete()
-        messages.success(request, f"Opuszczono budżet {budget.name}.")
+        messages.success(request, f"You have left budget {budget.name}.")
     else:
-        messages.info(request, "Nie jesteś członkiem tego budżetu.")
+        messages.info(request, f"You are not in budget {budget.name}.")
 
     return redirect('budzetApp:budget_list')
 
@@ -311,7 +313,7 @@ def leave_budget(request, budget_id):
 def add_transaction(request):
     user_id = request.session.get('user_id')
     if not user_id:
-        messages.error(request, "You need to be logged, to add transaction.")
+        messages.error(request, "You need to be logged in to add transaction.")
         return redirect('budzetApp:login')
 
     user = Uzytkownicy.objects.get(pk=user_id)
@@ -351,13 +353,13 @@ def add_transaction(request):
 def transaction_detail(request, transaction_id):
     user_id = request.session.get('user_id')
     if not user_id:
-        messages.error(request, "Musisz być zalogowany, aby zobaczyć szczegóły transakcji.")
+        messages.error(request, "You need to be logged in to see transaction details.")
         return redirect('budzetApp:login')
 
     transaction = get_object_or_404(Transakcje, pk=transaction_id)
     # Opcjonalnie: sprawdź, czy użytkownik ma dostęp do tej transakcji
     if transaction.budget not in Budzety.objects.filter(users__id=user_id):
-        messages.error(request, "Nie masz dostępu do tej transakcji.")
+        messages.error(request, "You do not have access to this transaction.")
         return redirect('budzetApp:index')
 
     return render(request, 'budzetApp/transaction_detail.html', {'transaction': transaction})
@@ -371,7 +373,7 @@ def transaction_detail(request, transaction_id):
 def create_category(request):
     user_id = request.session.get('user_id')
     if not user_id:
-        messages.error(request, "Musisz być zalogowany, aby dodać kategorię.")
+        messages.error(request, "You need to be logged in to add category.")
         return redirect('budzetApp:login')
 
     user = Uzytkownicy.objects.get(pk=user_id)

@@ -12,28 +12,28 @@ Szczegóły transakcji
 
 {% block main %}
 <div class="form-container wide">
-    <h2>Szczegóły transakcji</h2>
+    <h2>Transaction details</h2>
     <table class="details-table">
         <tr>
-            <th>Użytkownik</th>
+            <th>User</th>
             <td>{{ transaction.user.username }}</td>
         </tr>
         <tr>
-            <th>Kategoria</th>
+            <th>Category</th>
             <td>{{ transaction.category.category_name }}</td>
         </tr>
         <tr>
-            <th>Typ</th>
+            <th>Type</th>
             <td>
                 {% if transaction.amount < 0 %}
-                Wydatek
+                Expense
                 {% else %}
-                Wpłata
+                Payment
                 {% endif %}
             </td>
         </tr>
         <tr>
-            <th>Kwota</th>
+            <th>Amount</th>
             <td class="{% if transaction.amount < 0 %}expense{% else %}income{% endif %}">
                 {% if bt.amount < 0 %}
                 {{ transaction.amount|floatformat:"2" |slice:"1:" }}
@@ -43,16 +43,16 @@ Szczegóły transakcji
             </td>
         </tr>
         <tr>
-            <th>Data</th>
+            <th>Date</th>
             <td>{{ transaction.transaction_date }}</td>
         </tr>
         <tr>
-            <th>Opis</th>
+            <th>Description</th>
             <td>{{ transaction.description }}</td>
         </tr>
     </table>
     <div class="form-actions">
-        <a href="{% url 'budzetApp:index' %}" class="btn-cancel">Powrót</a>
+        <a href="{% url 'budzetApp:index' %}" class="btn-cancel">Back</a>
     </div>
 </div>
 {% endblock %}

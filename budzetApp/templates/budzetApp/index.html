@@ -193,7 +193,7 @@
                     <td>
                         <div class="action-buttons">
                             <form action="{% url 'budzetApp:transaction_detail' transaction.id %}" method="get" style="display:inline;">
-                                <button type="submit" class="btn-submit" style="padding: 4px 16px;">Szczegóły</button>
+                                <button type="submit" class="btn-submit" style="padding: 4px 16px;">Details</button>
                             </form>
                         </div>
                     </td>
@@ -227,7 +227,7 @@
     </div>
 
     <div class="budget-users-panel">
-        <h3>Użytkownicy budżetu:</h3>
+        <h3>Budget users:</h3>
         <ul>
             {% for user in users_in_budget %}
             <li>{{ user.username }} ({{ user.email }})</li>
