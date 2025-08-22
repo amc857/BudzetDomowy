@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { text-align: center; }
+        .budget-details { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Budget: {{ budget.name }}</h1>
+
+    <div class="budget-details">
+        <p><strong>ID:</strong> {{ budget.id }}</p>
+        <p><strong>Data:</strong> {{ budget.date }}</p>
+        <p><strong>Somthing else:</strong> {{ budget.expenses }}</p>
+
+    </div>
+</body>
+</html>

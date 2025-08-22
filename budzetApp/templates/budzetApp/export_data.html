@@ -1,0 +1,52 @@
+{% extends "budzetApp/temp.html" %}
+{% load static %}
+
+{% block styles %}
+    {{ block.super }}
+{% endblock styles %}
+
+
+{% block main %}
+<h2>Export Data to PDF</h2>
+
+<div class="budget-dropdown-panel">
+    <div id="budget-display-container-main" class="budget-dropdown-toggle-row">
+        <span id="budget-dropdown-toggle" style="display: flex; align-items: center;">
+            <span style="font-size: 1.5rem; font-weight: bold; margin-right: 8px;">
+                Budget:
+            </span>
+            <span id="current-budget-name-main" style="font-weight: bold;">
+                {% if selected_budget %}
+                    {{ selected_budget.name }}
+                {% else %}
+                    Panel główny
+                {% endif %}
+            </span>
+            <span id="budget-arrow" style="font-size: 1.2rem; margin-left: 8px;">▼</span>
+        </span>
+    </div>
+    <div id="budget-dropdown-main" class="budget-dropdown-content">
+        {% if budgets %}
+        <h3>Choose Budget</h3>
+        <ul>
+            {% for budget in budgets %}
+            <li>
+                <a href="?budget={{ budget.id }}" class="budget-select">{{ budget.name }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>No budgets available.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if selected_budget %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="budget_id" value="{{ selected_budget.id }}">
+        <button type="submit">Export selected budget to PDF</button>
+    </form>
+{% endif %}
+
+{% endblock %}

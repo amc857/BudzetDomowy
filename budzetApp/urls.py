@@ -27,5 +27,7 @@ urlpatterns = [
     path('get_budget_categories/', views.get_budget_categories, name='get_budget_categories'),
     path('leave_budget/<int:budget_id>/', views.leave_budget, name='leave_budget'),
     path('delete_transaction/<int:transaction_id>/', views.delete_transaction, name='delete_transaction'),
+    path('export/', views.export_data_view, name='export_data'),
+    path('pdftemp/', views.pdf_temp, name='pdf_temp'),
 
 ]

@@ -3,7 +3,7 @@ import secrets
 
 # Django core
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db.models import Sum
@@ -12,6 +12,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
+from xhtml2pdf import pisa
+from django.template.loader import get_template
 
 # App models
 from budzetApp.models import (
@@ -494,3 +496,39 @@ def delete_transaction(request, transaction_id):
     messages.error(request, "Invalid request.")
     return redirect('budzetApp:index')
 
+#----------------------------------------------------------------------
+
+#Generowanie PDF
+
+def export_data_view(request):
+    budgets = Budzety.objects.all()
+    selected_budget = None
+
+    # Budżet z query param
+    budget_id = request.GET.get("budget")
+    if budget_id:
+        selected_budget = get_object_or_404(Budzety, id=budget_id)
+
+    # Eksport PDF po submit
+    if request.method == "POST":
+        budget_id = request.POST.get("budget_id")
+        budget = get_object_or_404(Budzety, id=budget_id)
+        return generate_pdf(budget)
+
+    return render(request, "budzetApp/export_data.html", {
+        "budgets": budgets,
+        "selected_budget": selected_budget
+    })
+
+def generate_pdf(budget):
+    template = get_template("budzetApp/pdf_template.html")
+    html = template.render({"budget": budget})
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="budget_{budget.name}.pdf"'
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    if pisa_status.err:
+        return HttpResponse("PDF generation failed", status=500)
+    return response
+
+def pdf_temp(request):
+    return render(request, "budzetApp/pdf_template.html")
