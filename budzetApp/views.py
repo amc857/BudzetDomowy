@@ -14,6 +14,10 @@ from urllib.parse import urlencode
 from django.views.decorators.csrf import csrf_exempt
 from xhtml2pdf import pisa
 from django.template.loader import get_template
+from django.utils.timezone import now
+
+from itertools import zip_longest
+
 
 # App models
 from budzetApp.models import (
@@ -501,34 +505,135 @@ def delete_transaction(request, transaction_id):
 #Generowanie PDF
 
 def export_data_view(request):
-    budgets = Budzety.objects.all()
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Please log in or create an account.")
+        return redirect('budzetApp:login')
+
+    user = get_object_or_404(Uzytkownicy, pk=user_id)
+    budgets = Budzety.objects.filter(users=user).order_by('name')
     selected_budget = None
 
-    # Budżet z query param
     budget_id = request.GET.get("budget")
     if budget_id:
-        selected_budget = get_object_or_404(Budzety, id=budget_id)
+        selected_budget = budgets.filter(id=budget_id).first()
 
-    # Eksport PDF po submit
     if request.method == "POST":
-        budget_id = request.POST.get("budget_id")
-        budget = get_object_or_404(Budzety, id=budget_id)
-        return generate_pdf(budget)
+        return generate_pdf(request)  # Przekazujemy dalej request
 
     return render(request, "budzetApp/export_data.html", {
         "budgets": budgets,
         "selected_budget": selected_budget
     })
 
-def generate_pdf(budget):
+def generate_pdf(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Please log in or create an account.")
+        return redirect('budzetApp:login')
+
+    user = get_object_or_404(Uzytkownicy, pk=user_id)
+    budgets = Budzety.objects.filter(users=user).order_by('id')
+
+    # Pobierz ID budżetu z POST (bo to submit z formularza)
+    selected_budget_id = request.POST.get('budget_id')
+    selected_budget = budgets.filter(id=selected_budget_id).first() if selected_budget_id else budgets.first()
+
+    if not selected_budget:
+        messages.error(request, "No budget found.")
+        return redirect('budzetApp:index')
+
+    transactions = Transakcje.objects.filter(budget=selected_budget).order_by('-transaction_date')
+    total_income = transactions.filter(amount__gt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expenses = transactions.filter(amount__lt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+    budget_amount = selected_budget.budget_amount
+    users_in_budget = selected_budget.users.all()
+
+    category_expenses = (
+        Transakcje.objects
+        .filter(budget=selected_budget, amount__lt=0)
+        .values('category__category_name')
+        .annotate(total=Sum('amount'))
+        .order_by('category__category_name')
+    )
+    for cat in category_expenses:
+        cat['total'] = abs(cat['total'])
+
+    users_list = list(users_in_budget)
+    user_pairs = list(zip_longest(*[iter(users_list)] * 2, fillvalue=None))
+
+    context = {
+        'budgets': budgets,
+        'selected_budget': selected_budget,
+        'current_user': user,
+        'transactions': transactions,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'users_in_budget': users_in_budget,
+        'budget_amount': budget_amount,
+        'category_expenses': category_expenses,
+        'now': now(),
+        'users_pairs': user_pairs,
+    }
+
     template = get_template("budzetApp/pdf_template.html")
-    html = template.render({"budget": budget})
+    html = template.render(context)
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="budget_{budget.name}.pdf"'
+    response['Content-Disposition'] = f'attachment; filename="budget_{selected_budget.name}.pdf"'
     pisa_status = pisa.CreatePDF(html, dest=response)
+
     if pisa_status.err:
         return HttpResponse("PDF generation failed", status=500)
+
     return response
 
 def pdf_temp(request):
-    return render(request, "budzetApp/pdf_template.html")
+    user_id = request.session.get('user_id')
+    if not user_id:
+        messages.error(request, "Please log in or create account.")
+        return redirect('budzetApp:login')
+
+    user = get_object_or_404(Uzytkownicy, pk=user_id)
+    budgets = Budzety.objects.filter(users=user).order_by('id')
+    selected_budget_id = request.GET.get('budget')
+    selected_budget = budgets.filter(id=selected_budget_id).first() if selected_budget_id else budgets.first()
+
+    if not selected_budget:
+        messages.error(request, "No budget found.")
+        return redirect('budzetApp:index')
+
+    transactions = Transakcje.objects.filter(budget=selected_budget).order_by('-transaction_date')
+    total_income = transactions.filter(amount__gt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expenses = transactions.filter(amount__lt=0).aggregate(Sum('amount'))['amount__sum'] or 0
+    budget_amount = selected_budget.budget_amount
+    users_in_budget = selected_budget.users.all()
+
+    category_expenses = (
+        Transakcje.objects
+        .filter(budget=selected_budget, amount__lt=0)
+        .values('category__category_name')
+        .annotate(total=Sum('amount'))
+        .order_by('category__category_name')
+    )
+    for cat in category_expenses:
+        cat['total'] = abs(cat['total'])
+
+
+
+    users_list = list(users_in_budget)
+    user_pairs = list(zip_longest(*[iter(users_list)] * 2, fillvalue=None))  # tworzy listę 2-elementowych krotek
+
+    context = {
+        'budgets': budgets,
+        'selected_budget': selected_budget,
+        'current_user': user,
+        'transactions': transactions,
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'users_in_budget': users_in_budget,
+        'budget_amount': budget_amount,
+        'category_expenses': category_expenses,
+        'now': now(),
+        'users_pairs': user_pairs,
+    }
+    return render(request, 'budzetApp/pdf_template.html', context)
